@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
       
-    发布 mweb dist 到 github pages 脚本 - WuYun Blog
+    deploy mweb to github pages - WuYun Blog
     
     </title>
     
@@ -59,22 +59,19 @@
 <div class="container">
   <article class="post-container">
     <header class="post-header">
-        <h1 class="post-title">发布 mweb dist 到 github pages 脚本</h1>
+        <h1 class="post-title">deploy mweb to github pages</h1>
         <p class="post-date">
                 <span>Posted <time datetime="2020/02/10" itemprop="datePublished">2020/02/10</time></span>
             </p>
     </header>
 
     <div class="post-content clearfix">
-<pre><code class="language-text">#!/bin/sh
-
+<pre><code class="language-bash">#!/bin/sh
+set -e
 # Please set the name and email. 
 # Because MWeb can&#39;t get your github global setting.
 
-git config user.name &quot;wuyunqiang&quot;
-git config user.email &quot;842269153@qq.com&quot;
-
-cat blog.jajabjbj.top&gt;CNAME
+echo blog.jajabjbj.top &gt; CNAME
 
 gh-pages -d . -b gh-pages -m &quot;{{year}}-{{month}}-{{day}} {{time}}&quot; -r https://${GIT_USER}:${GIT_PASS}@github.com/yunqiangwu/mweb.git
 

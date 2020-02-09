@@ -4,7 +4,7 @@
   <title><![CDATA[WuYun Blog]]></title>
   <link href="https://blog.jajabjbj.top/atom.xml" rel="self"/>
   <link href="https://blog.jajabjbj.top/"/>
-  <updated>2020-02-10T03:17:04+08:00</updated>
+  <updated>2020-02-10T03:20:49+08:00</updated>
   <id>https://blog.jajabjbj.top/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -13,20 +13,17 @@
   <generator uri="http://www.mweb.im/">MWeb</generator>
   
   <entry>
-    <title type="html"><![CDATA[发布 mweb dist 到 github pages 脚本]]></title>
+    <title type="html"><![CDATA[deploy mweb to github pages]]></title>
     <link href="https://blog.jajabjbj.top/15812713431650.html"/>
     <updated>2020-02-10T02:02:23+08:00</updated>
     <id>https://blog.jajabjbj.top/15812713431650.html</id>
     <content type="html"><![CDATA[
-<pre><code class="language-text">#!/bin/sh
-
+<pre><code class="language-bash">#!/bin/sh
+set -e
 # Please set the name and email. 
 # Because MWeb can&#39;t get your github global setting.
 
-git config user.name &quot;wuyunqiang&quot;
-git config user.email &quot;842269153@qq.com&quot;
-
-cat blog.jajabjbj.top&gt;CNAME
+echo blog.jajabjbj.top &gt; CNAME
 
 gh-pages -d . -b gh-pages -m &quot;{{year}}-{{month}}-{{day}} {{time}}&quot; -r https://${GIT_USER}:${GIT_PASS}@github.com/yunqiangwu/mweb.git
 
