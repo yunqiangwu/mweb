@@ -1,0 +1,324 @@
+
+
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    HZERO全新脚手架HZERO-CLI不容错过！ - WuYun Blog
+    
+    </title>
+    
+    
+    
+    <link href="atom.xml" rel="alternate" title="WuYun Blog" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/style.css">
+    
+</head>
+  <body>
+
+
+
+
+        <div id="wrapper">
+            <header class="site-header">
+                <div class="container">
+                    <div class="site-title-wrapper">
+                          <a class="button-square" href="index.html">
+<svg class="svg-inline--fa fa-home fa-w-18" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="home" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg=""><path fill="currentColor" d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"></path></svg>
+                            </a>
+                        
+                         
+                        
+                        
+                        
+                        
+                      
+                      <a class="button-square" href="atom.xml" target="_blank" title="RSS">
+                              <svg class="svg-inline--fa fa-rss fa-w-14" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                      </a>
+
+              
+                       
+                         
+                        
+                    </div>
+
+                    <ul class="site-nav">
+                        
+                    </ul>
+                </div>
+            </header>
+
+            <div id="container">
+
+ 
+<div class="container">
+  <article class="post-container">
+    <header class="post-header">
+        <h1 class="post-title">HZERO全新脚手架HZERO-CLI不容错过！</h1>
+        <p class="post-date">
+                <span>Posted <time datetime="2020/02/10" itemprop="datePublished">2020/02/10</time></span>
+            </p>
+    </header>
+
+    <div class="post-content clearfix">
+<p><a name="bb0e0fe2"></a></p>
+
+<h2 id="toc_0">全新的技术架构！</h2>
+
+<p><a name="8fc8c169"></a></p>
+
+<h2 id="toc_1">基于 QIANKUN &amp; NEST-CLI &amp; LERNA 升级了整体架构。</h2>
+
+<p><img src="https://cdn.nlark.com/yuque/0/2020/png/155608/1582004751429-519b14de-bc70-4236-a5f9-c4ff01506307.png#align=left&amp;display=inline&amp;height=980&amp;originHeight=980&amp;originWidth=1146&amp;size=0&amp;status=done&amp;style=none&amp;width=1146" alt=""/></p>
+
+<p>我们把一个前端项目分成以下几个部分：</p>
+
+<ul>
+<li>hzero-boot: 定义了一组 api 实现 页面整体的布局、全局配置、规范子模块的页面路由组合方式等、被父工程和子工程依赖，父工程也可以直接当 hzero-boot。</li>
+<li>hzero-webpack-script: 封装 webpack 构建的配置和 webpack 脚本。</li>
+<li>hzero-cli: 命令行工具，这里可以封装一些处理代码的小工具，比如代码的 hzero 多语言处理工具等。</li>
+<li>hzero-schemas: 这里是用来页面可以模块的模板，模块可以是基于 react 或者 vue。</li>
+<li>微前端子模块: 基于组件化的思想， 子模块也是可以一个组成部分。</li>
+</ul>
+
+<p>上面的每个部分也可组装可替换。</p>
+
+<p>比如我们的视图布局想要换成 aliyun console 的样式，我们只需要重新开发一个 hzero-boot-aliyun-console 把它替换掉 hzero-boot 就可以了。</p>
+
+<p><a name="759622d1"></a></p>
+
+<h2 id="toc_2">丰富的功能</h2>
+
+<ol>
+<li>代码多语言扫描</li>
+<li>支持增量编译</li>
+<li>lerna 的多个子模块管理</li>
+<li>代码生成器</li>
+<li>typescript 支持</li>
+</ol>
+
+<p><a name="08b074cc"></a></p>
+
+<h2 id="toc_3">解决了 HZERO 实施当中一系列痛点问题！</h2>
+
+<ol>
+<li>文件过多导致 webpack 编译的内存溢出。</li>
+<li>不必要构建时间增加：每次构建都需要全部文件扫描编译，比如在一千个文件中，只修改了其中一个文件一行代码，每次重新发布版本时，也需要全部编译一次。</li>
+<li>多团队并行开发时合并代码容易冲突。</li>
+</ol>
+
+<p><a name="1a138b8a"></a></p>
+
+<h1 id="toc_4">话不多说，我们如何进行操作使用呢？</h1>
+
+<p>下面将示范一下 hzero-cli 的简单使用流程</p>
+
+<p><a name="8cbd8915"></a></p>
+
+<h3 id="toc_5">安装 hzero-cli</h3>
+
+<blockquote>
+<p><strong>注意</strong>：hzero-cli 需要安装 node 10 以上的版本，这里建议大家安装 node 最新稳定版本(lts 版)。</p>
+</blockquote>
+
+<p>全局安装 hzero-cli 命令行工具</p>
+
+<pre><code class="language-bash">npm install -g hzero-cli --registry http://nexus.saas.hand-china.com/content/groups/hzero-npm-group # 安装 hzero-cli 工具
+</code></pre>
+
+<p><a name="8aae0c6b"></a></p>
+
+<h3 id="toc_6">生成项目</h3>
+
+<pre><code class="language-bash">hzero-cli new sample # 创建 hzero 前端项目
+cd sample &amp;&amp; hzero-cli info # 查看当前工程信息
+</code></pre>
+
+<p><a name="c8f939d5"></a></p>
+
+<h3 id="toc_7">创建子模块</h3>
+
+<pre><code class="language-bash">npx hzero-cli g sub-module test-module  # 创建一个名字为 test-module 的子模块
+</code></pre>
+
+<p>运行完成之后，当前项目目录会多一个文件夹 <code>packages/sample-test-module</code>, 这里 hzero 中规定所有子模块的名字前缀默认都是父工程的名字。</p>
+
+<p><a name="0fc757b5"></a></p>
+
+<h3 id="toc_8">创建页面</h3>
+
+<p>进入子模块目录：</p>
+
+<pre><code class="language-bash">cd packages/sample-test-module
+</code></pre>
+
+<p>在子模块下创建一个页面：</p>
+
+<pre><code class="language-bash">npx hzero-cli g simple-page test-page # 创建一个名字为 test-page 的页面
+</code></pre>
+
+<p>创建完成生成一个简单页面,生成 <code>packages/sample-test-module/src/routes/test-page</code> 文件夹。</p>
+
+<p><a name="9acb1e51"></a></p>
+
+<h3 id="toc_9">启动调试</h3>
+
+<pre><code class="language-bash">yarn start
+</code></pre>
+
+<p>开发调试可以可以在父项目目录运行，也可以在子模块目录运行。<br />区别在于:</p>
+
+<ul>
+<li>父项目目录运行调试只是调试子模块的加载情况，调试的是编译后的子模块数据，如果想调试那个子模块，先用按需增量编译那个子模块</li>
+<li>子模块目录运行 调试，调试的范围是只是当前子模块下的页面</li>
+</ul>
+
+<p>当开始编译后会自动打开浏览器，通过 localhost:8000，查看页面效果。</p>
+
+<p><a name="a98c6810"></a></p>
+
+<h3 id="toc_10">全量编译</h3>
+
+<p>进入父工程目录</p>
+
+<pre><code class="language-bash">yarn run build
+</code></pre>
+
+<p>全量编译会删掉之前编译的所有代码。<br />全量编译会生成 dist 文件夹， 所有子模块的代码会编译到 <code>dist/packages</code>下以子模块的名字命名的文件夹。</p>
+
+<p><a name="4c9ce866"></a></p>
+
+<h3 id="toc_11">增量编译</h3>
+
+<p>进入父工程目录</p>
+
+<pre><code class="language-bash">yarn run build:ms sample-test-module # 增量编译名字为 sample-test-module 的模块
+</code></pre>
+
+<p>注意：增量编译时， 如果父工程已经编译过， 这里不会重新编译父项目文件。<br />增量编译重新生成 <code>dist/packages</code>下以子模块的名字命名的文件夹，以及 packages 文件下的 microConfig.json 索引文件。</p>
+
+<p>更多操作 👉👉👉 <a href="http://hzero-front-docs.hft.jajabjbj.top/zh/docs/quick-start/init-project/">视频教程</a></p>
+
+<p><a name="930d842b"></a></p>
+
+<h1 id="toc_12">接下来我们做什么</h1>
+
+<blockquote>
+<p>hzero-cli 是 hzero 前端工程的构建工具。hzero-cli 是 目前hzero 前端工程的命令行工具，通过 hzero-cli 可以创建微前端架构的前端项目脚手架，创建子模块，创建页面。</p>
+</blockquote>
+
+<ul>
+<li><p>hzero-cli 还在开发中， 后续讲支持更多功能：</p></li>
+</ul>
+
+<ol>
+<li>代码模板兼容阿里 ui更多块市场生态</li>
+<li>增强微前端支持 支持热更新加载子应用</li>
+<li>支持可视化 hzero-cli 配置界面</li>
+</ol>
+
+<p>技术小哥们正在赶制中，敬请期待！！</p>
+
+<p><a name="56dfdb14"></a></p>
+
+<h2 id="toc_13">其他资料</h2>
+
+<ul>
+<li><a href="https://code.choerodon.com.cn/hft/hzero-cli.git">hzero-cli 源码</a></li>
+<li><a href="https://code.choerodon.com.cn/hft/hzero-front-demo.git">hzero</a><a href="https://code.choerodon.com.cn/hft/hzero-front-demo.git"> </a><a href="https://code.choerodon.com.cn/hft/hzero-front-demo.git">项目Demo</a></li>
+<li><a href="http://hzero-front-docs.hft.jajabjbj.top/zh/docs/quick-start/init-project/">hzero-cli</a><a href="http://hzero-front-docs.hft.jajabjbj.top/zh/docs/quick-start/init-project/"> </a><a href="http://hzero-front-docs.hft.jajabjbj.top/zh/docs/quick-start/init-project/">使用教程</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/78362028">qiankun</a></li>
+</ul>
+
+    </div>
+    <footer class="post-footer clearfix">
+      
+           
+      
+        
+    </footer>
+     <div class="comments-wrap">
+        <div class="share-comments">
+          
+
+          
+
+          
+        </div>
+      </div><!-- end comments wrap -->
+  </article>
+ </div><!-- end-->
+
+
+
+    <footer class="footer">
+            <div class="container">
+                <div class="site-footer-wrapper">
+                        <a class="button-square" href="index.html">
+<svg class="svg-inline--fa fa-home fa-w-18" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="home" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg=""><path fill="currentColor" d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"></path></svg>
+                            </a>
+                        
+                         
+                        
+                        
+                        
+                        
+                      
+                      <a class="button-square" href="atom.xml" target="_blank" title="RSS">
+                              <svg class="svg-inline--fa fa-rss fa-w-14" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                      </a>
+
+              
+                       
+                                                
+                </div>
+                <div class="site-menu-wrapper">
+                  &nbsp;<span>|</span>&nbsp;
+                  
+                    <a target="self" class="" href="index.html">Home</a>
+                    &nbsp;<span>|</span>&nbsp;
+                  
+                    <a target="_self" class="" href="archives.html">Archives</a>
+                    &nbsp;<span>|</span>&nbsp;
+                                             
+                </div>
+
+                <p class="footer-copyright">
+                        Copyright &copy; 2019
+                        Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+                        Theme used <a target="_blank" href="https://blog.timac.org">Timac</a>.
+                </p>
+            </div>
+        </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+        
+      
+  
+    
+
+
+    </body>
+</html>
