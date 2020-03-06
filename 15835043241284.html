@@ -1,0 +1,325 @@
+
+
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    c7n-ui codepen 在线demo 问题修复 - WuYun Blog
+    
+    </title>
+    
+    
+    
+    <link href="atom.xml" rel="alternate" title="WuYun Blog" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/style.css">
+    
+</head>
+  <body>
+
+
+
+
+        <div id="wrapper">
+            <header class="site-header">
+                <div class="container">
+                    <div class="site-title-wrapper">
+                          <a class="button-square" href="index.html">
+<svg class="svg-inline--fa fa-home fa-w-18" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="home" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg=""><path fill="currentColor" d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"></path></svg>
+                            </a>
+                        
+                         
+                        
+                        
+                        
+                        
+                      
+                      <a class="button-square" href="atom.xml" target="_blank" title="RSS">
+                              <svg class="svg-inline--fa fa-rss fa-w-14" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                      </a>
+
+              
+                       
+                         
+                        
+                    </div>
+
+                    <ul class="site-nav">
+                        
+                    </ul>
+                </div>
+            </header>
+
+            <div id="container">
+
+ 
+<div class="container">
+  <article class="post-container">
+    <header class="post-header">
+        <h1 class="post-title">c7n-ui codepen 在线demo 问题修复</h1>
+        <p class="post-date">
+                <span>Posted <time datetime="2020/03/06" itemprop="datePublished">2020/03/06</time></span>
+            </p>
+    </header>
+
+    <div class="post-content clearfix">
+<h2 id="toc_0">解决 c7n-ui codepen 在线代码演示 ，通过拿不到组件库。</h2>
+
+<p>当我们打开 <a href="https://choerodon.github.io/choerodon-ui/">https://choerodon.github.io/choerodon-ui/</a> 点击网站 codepen 在线预览，代码无法预览。</p>
+
+<p>codepen 的依赖都是通过添加 <code>&lt;script src=&quot;https://unpkg.com/choerodon-ui@0.8.49/dist/choerodon-ui-with-locales.js&quot;&gt;&lt;/script&gt;</code><br/>
+把组件库引入到浏览器环境中。</p>
+
+<p>由于 codepen 环境运行的代码只是经过 babel 简单处理一下， 但是不不支持 import 语法，所以打开 codepen 之后。 import 语句：</p>
+
+<pre><code class="language-text">import { Button } from &#39;choerodon-ui&#39;;
+</code></pre>
+
+<p>会被转换成</p>
+
+<pre><code class="language-text">const { Button } = window[&quot;choerodon-ui&quot;];
+</code></pre>
+
+<p>所以 codepen 引入的依赖库都是需要挂载到 global 全局对象上面,通过全局对象引用。</p>
+
+<p>类似这样 <code>window.React</code>、<code>window.Vue</code>、<code>window[&quot;choerodon-ui&quot;]</code> 在代码中通过 全局对象。</p>
+
+<p>必须保证 <code>https://unpkg.com/choerodon-ui@0.8.49/dist/choerodon-ui-with-locales.js</code> 中有挂载语句：</p>
+
+<pre><code class="language-text">window[&quot;choerodon-ui&quot;] = ...
+</code></pre>
+
+<p>我们之间输出一下 <code>window[&quot;choerodon-ui&quot;]</code> 对象 测试一下:<br/>
+<img src="media/15835043241284/15835059729329.jpg" alt="" style="width:722px;"/></p>
+
+<p>可以看到 <code>window[&quot;choerodon-ui&quot;]</code> 值为 undefined</p>
+
+<p>然后我们先来看一下 经过 webpack 编译后输出的 <code>https://unpkg.com/choerodon-ui@0.8.49/dist/choerodon-ui-with-locales.js</code> 内容：</p>
+
+<pre><code class="language-javascript">/*!
+ * 
+ * choerodon-ui v0.8.49
+ *       
+ */
+(function webpackUniversalModuleDefinition(root, factory) {
+    if(typeof exports === &#39;object&#39; &amp;&amp; typeof module === &#39;object&#39;)
+        module.exports = factory(require(&quot;mobx&quot;), require(&quot;moment&quot;), require(&quot;react&quot;), require(&quot;react-dom&quot;));
+    else if(typeof define === &#39;function&#39; &amp;&amp; define.amd)
+        define([&quot;mobx&quot;, &quot;moment&quot;, &quot;react&quot;, &quot;react-dom&quot;], factory);
+    else if(typeof exports === &#39;object&#39;)
+        exports[&quot;choerodon-ui-with-locales&quot;] = factory(require(&quot;mobx&quot;), require(&quot;moment&quot;), require(&quot;react&quot;), require(&quot;react-dom&quot;));
+    else
+        root[&quot;choerodon-ui-with-locales&quot;] = factory(root[&quot;mobx&quot;], root[&quot;moment&quot;], root[&quot;React&quot;], root[&quot;ReactDOM&quot;]);
+})(window,function(__WEBPACK_EXTERNAL_MODULE_mobx__, __WEBPACK_EXTERNAL_MODULE_moment__, __WEBPACK_EXTERNAL_MODULE_react__, __WEBPACK_EXTERNAL_MODULE_react_dom__) {
+    // ...
+    // return ...
+});
+
+</code></pre>
+
+<p>我们可以看到这里有一个 <code>root[&quot;choerodon-ui-with-locales&quot;]</code> 这里 <code>root</code> 就是全局对象 <code>window</code>, 但是这里挂载的字段不对。应该是<code>choerodon-ui</code>，为什么会这样了。</p>
+
+<p>其实这是一种 webpack 的输出 dist 机制, 当检测到当前是浏览器环境时，会把整个组件库通过 entry name 挂载到全局对象上面。 entry name 就是在 webpack entry 配置来指定的， 比如：</p>
+
+<pre><code class="language-javascript">{
+    entry: {
+        &#39;abcd&#39;: &#39;./src/abcd/index.js&#39;,
+    }
+}
+</code></pre>
+
+<p>这里最后生成的 dist 中 abcd 就是 entry name, 如果 entry 配置的值是 数组 或者 字符串， 没有指定 entry ， 那么 entry 就会变成 main。</p>
+
+<p>我们看一下 c7n-ui <a href="https://github.com/choerodon/choerodon-ui/blob/master/webpack.config.js#L16-L28">webpack 配置</a>： </p>
+
+<pre><code class="language-javascript">function addLocales(webpackConfig) {
+  let packageName = `${pkg.name}-with-locales`;
+  let packageNamePro = `${pkg.name}-pro-with-locales`;
+  if (webpackConfig.entry[`${pkg.name}.min`]) {
+    packageName += &#39;.min&#39;;
+  }
+  if (webpackConfig.entry[`${pkg.name}-pro.min`]) {
+    packageNamePro += &#39;.min&#39;;
+  }
+  webpackConfig.entry[packageName] = &#39;./index-with-locales.js&#39;;
+  webpackConfig.entry[packageNamePro] = &#39;./index-pro-with-locales.js&#39;;
+  webpackConfig.output.filename = &#39;[name].js&#39;;
+}
+</code></pre>
+
+<p>这里多输出了两个包含多语言数据的包。但是也修改了 entry name。 所以导致 <code>window[&quot;choerodon-ui&quot;]</code> 变成了 <code>window[&quot;choerodon-ui-with-locales&quot;]</code>,那么如何修改把它修复这个问题呢。</p>
+
+<p>既然是 webpack 的锅， 所以我去 webpack 官网找了一圈， 最终还是没有找到修改 dist 文件中的 entry name 的方法。</p>
+
+<p>最后想了一下, dist 的内容不就是文件内容的文本替换吗。 直接写一个 webpack plugins 就可以解决这个问题 ， 最后通过开发 webpack plugin 修改 webpack 输出 dist 指定生成的  global name </p>
+
+<p>webpack plugin 代码实现:</p>
+
+<pre><code class="language-javascript">
+const webpackConfig = {
+    plugins:[
+    {
+      apply: compiler =&gt; {
+        const replaceLibraryConfigList = [
+          {
+            from: /choerodon-ui(-with-locales(\.min)?)/gi,
+            to: &#39;choerodon-ui&#39;,
+          },
+          {
+            from: /choerodon-ui-pro(-with-locales(\.min)?)/gi,
+            to: &#39;choerodon-ui/pro&#39;,
+          },
+        ];
+        compiler.hooks.compilation.tap(&#39;compilation&#39;, compilation =&gt; {
+          const { mainTemplate, chunkTemplate } = compilation;
+          // eslint-disable-next-line no-restricted-syntax
+          for (const template of [mainTemplate, chunkTemplate]) {
+            template.hooks.renderWithEntry.tap(&#39;UmdMainTemplatePlugin&#39;, (source, entry) =&gt; {
+              const entryName = entry.name;
+              const findReplaceCfg = replaceLibraryConfigList.find(replaceCfg =&gt; {
+                return replaceCfg.from.test(entryName);
+              });
+              if (findReplaceCfg) {
+                let newSource = source;
+                let startPos = -1;
+                // eslint-disable-next-line no-cond-assign
+                while (
+                  (startPos = newSource
+                    .source()
+                    .indexOf(entryName, startPos &gt; 0 ? startPos : undefined)) !== -1
+                ) {
+                  newSource = new ReplaceSource(newSource);
+                  newSource.replace(startPos, startPos + entryName.length - 1, findReplaceCfg.to);
+                }
+                return newSource;
+              }
+              return source;
+            });
+          }
+        });
+      },
+    }]
+};
+</code></pre>
+
+<p><a href="https://github.com/choerodon/choerodon-ui/blob/master/webpack.config.js#L45">源码位置</a></p>
+
+<p>这个插件的原理很简单， 就是通过正则表达式找到  <code>window[&quot;choerodon-ui-with-locales&quot;]</code> 替换成  <code>window[&quot;choerodon-ui&quot;]</code></p>
+
+<p>处理之后生成的 dist：</p>
+
+<ul>
+<li><a href="https://unpkg.com/choerodon-ui@0.8.56/dist/choerodon-ui-with-locales.js">https://unpkg.com/choerodon-ui@0.8.56/dist/choerodon-ui-with-locales.js</a></li>
+</ul>
+
+<pre><code class="language-javascript">/*!
+ * 
+ * choerodon-ui v0.8.56
+ *       
+ */
+(function webpackUniversalModuleDefinition(root, factory) {
+    if(typeof exports === &#39;object&#39; &amp;&amp; typeof module === &#39;object&#39;)
+        module.exports = factory(require(&quot;mobx&quot;), require(&quot;moment&quot;), require(&quot;react&quot;), require(&quot;react-dom&quot;));
+    else if(typeof define === &#39;function&#39; &amp;&amp; define.amd)
+        define([&quot;mobx&quot;, &quot;moment&quot;, &quot;react&quot;, &quot;react-dom&quot;], factory);
+    else if(typeof exports === &#39;object&#39;)
+        exports[&quot;choerodon-ui&quot;] = factory(require(&quot;mobx&quot;), require(&quot;moment&quot;), require(&quot;react&quot;), require(&quot;react-dom&quot;));
+    else
+        root[&quot;choerodon-ui&quot;] = factory(root[&quot;mobx&quot;], root[&quot;moment&quot;], root[&quot;React&quot;], root[&quot;ReactDOM&quot;]);
+})(window, function(__WEBPACK_EXTERNAL_MODULE_mobx__, __WEBPACK_EXTERNAL_MODULE_moment__, __WEBPACK_EXTERNAL_MODULE_react__, __WEBPACK_EXTERNAL_MODULE_react_dom__) {});
+</code></pre>
+
+<p>到此，问题解决：</p>
+
+<p><img src="media/15835043241284/15835072613146.jpg" alt="" style="width:982px;"/></p>
+
+    </div>
+    <footer class="post-footer clearfix">
+      
+           
+      
+        
+    </footer>
+     <div class="comments-wrap">
+        <div class="share-comments">
+          
+
+          
+
+          
+        </div>
+      </div><!-- end comments wrap -->
+  </article>
+ </div><!-- end-->
+
+
+
+    <footer class="footer">
+            <div class="container">
+                <div class="site-footer-wrapper">
+                        <a class="button-square" href="index.html">
+<svg class="svg-inline--fa fa-home fa-w-18" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="home" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg=""><path fill="currentColor" d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"></path></svg>
+                            </a>
+                        
+                         
+                        
+                        
+                        
+                        
+                      
+                      <a class="button-square" href="atom.xml" target="_blank" title="RSS">
+                              <svg class="svg-inline--fa fa-rss fa-w-14" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                      </a>
+
+              
+                       
+                                                
+                </div>
+                <div class="site-menu-wrapper">
+                  &nbsp;<span>|</span>&nbsp;
+                  
+                    <a target="self" class="" href="index.html">Home</a>
+                    &nbsp;<span>|</span>&nbsp;
+                  
+                    <a target="_self" class="" href="archives.html">Archives</a>
+                    &nbsp;<span>|</span>&nbsp;
+                                             
+                </div>
+
+                <p class="footer-copyright">
+                        Copyright &copy; 2019
+                        Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+                        Theme used <a target="_blank" href="https://blog.timac.org">Timac</a>.
+                </p>
+            </div>
+        </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+        
+      
+  
+    
+
+
+    </body>
+</html>

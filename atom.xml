@@ -4,13 +4,192 @@
   <title><![CDATA[WuYun Blog]]></title>
   <link href="https://blog.jajabjbj.top/atom.xml" rel="self"/>
   <link href="https://blog.jajabjbj.top/"/>
-  <updated>2020-02-20T22:52:22+08:00</updated>
+  <updated>2020-03-06T23:12:40+08:00</updated>
   <id>https://blog.jajabjbj.top/</id>
   <author>
     <name><![CDATA[]]></name>
     
   </author>
   <generator uri="http://www.mweb.im/">MWeb</generator>
+  
+  <entry>
+    <title type="html"><![CDATA[c7n-ui codepen 在线demo 问题修复]]></title>
+    <link href="https://blog.jajabjbj.top/15835043241284.html"/>
+    <updated>2020-03-06T22:18:44+08:00</updated>
+    <id>https://blog.jajabjbj.top/15835043241284.html</id>
+    <content type="html"><![CDATA[
+<h2 id="toc_0">解决 c7n-ui codepen 在线代码演示 ，通过拿不到组件库。</h2>
+
+<p>当我们打开 <a href="https://choerodon.github.io/choerodon-ui/">https://choerodon.github.io/choerodon-ui/</a> 点击网站 codepen 在线预览，代码无法预览。</p>
+
+<p>codepen 的依赖都是通过添加 <code>&lt;script src=&quot;https://unpkg.com/choerodon-ui@0.8.49/dist/choerodon-ui-with-locales.js&quot;&gt;&lt;/script&gt;</code><br/>
+把组件库引入到浏览器环境中。</p>
+
+<p>由于 codepen 环境运行的代码只是经过 babel 简单处理一下， 但是不不支持 import 语法，所以打开 codepen 之后。 import 语句：</p>
+
+<pre><code class="language-text">import { Button } from &#39;choerodon-ui&#39;;
+</code></pre>
+
+<p>会被转换成</p>
+
+<pre><code class="language-text">const { Button } = window[&quot;choerodon-ui&quot;];
+</code></pre>
+
+<p>所以 codepen 引入的依赖库都是需要挂载到 global 全局对象上面,通过全局对象引用。</p>
+
+<p>类似这样 <code>window.React</code>、<code>window.Vue</code>、<code>window[&quot;choerodon-ui&quot;]</code> 在代码中通过 全局对象。</p>
+
+<p>必须保证 <code>https://unpkg.com/choerodon-ui@0.8.49/dist/choerodon-ui-with-locales.js</code> 中有挂载语句：</p>
+
+<pre><code class="language-text">window[&quot;choerodon-ui&quot;] = ...
+</code></pre>
+
+<p>我们之间输出一下 <code>window[&quot;choerodon-ui&quot;]</code> 对象 测试一下:<br/>
+<img src="media/15835043241284/15835059729329.jpg" alt="" style="width:722px;"/></p>
+
+<p>可以看到 <code>window[&quot;choerodon-ui&quot;]</code> 值为 undefined</p>
+
+<p>然后我们先来看一下 经过 webpack 编译后输出的 <code>https://unpkg.com/choerodon-ui@0.8.49/dist/choerodon-ui-with-locales.js</code> 内容：</p>
+
+<pre><code class="language-javascript">/*!
+ * 
+ * choerodon-ui v0.8.49
+ *       
+ */
+(function webpackUniversalModuleDefinition(root, factory) {
+    if(typeof exports === &#39;object&#39; &amp;&amp; typeof module === &#39;object&#39;)
+        module.exports = factory(require(&quot;mobx&quot;), require(&quot;moment&quot;), require(&quot;react&quot;), require(&quot;react-dom&quot;));
+    else if(typeof define === &#39;function&#39; &amp;&amp; define.amd)
+        define([&quot;mobx&quot;, &quot;moment&quot;, &quot;react&quot;, &quot;react-dom&quot;], factory);
+    else if(typeof exports === &#39;object&#39;)
+        exports[&quot;choerodon-ui-with-locales&quot;] = factory(require(&quot;mobx&quot;), require(&quot;moment&quot;), require(&quot;react&quot;), require(&quot;react-dom&quot;));
+    else
+        root[&quot;choerodon-ui-with-locales&quot;] = factory(root[&quot;mobx&quot;], root[&quot;moment&quot;], root[&quot;React&quot;], root[&quot;ReactDOM&quot;]);
+})(window,function(__WEBPACK_EXTERNAL_MODULE_mobx__, __WEBPACK_EXTERNAL_MODULE_moment__, __WEBPACK_EXTERNAL_MODULE_react__, __WEBPACK_EXTERNAL_MODULE_react_dom__) {
+    // ...
+    // return ...
+});
+
+</code></pre>
+
+<p>我们可以看到这里有一个 <code>root[&quot;choerodon-ui-with-locales&quot;]</code> 这里 <code>root</code> 就是全局对象 <code>window</code>, 但是这里挂载的字段不对。应该是<code>choerodon-ui</code>，为什么会这样了。</p>
+
+<p>其实这是一种 webpack 的输出 dist 机制, 当检测到当前是浏览器环境时，会把整个组件库通过 entry name 挂载到全局对象上面。 entry name 就是在 webpack entry 配置来指定的， 比如：</p>
+
+<pre><code class="language-javascript">{
+    entry: {
+        &#39;abcd&#39;: &#39;./src/abcd/index.js&#39;,
+    }
+}
+</code></pre>
+
+<p>这里最后生成的 dist 中 abcd 就是 entry name, 如果 entry 配置的值是 数组 或者 字符串， 没有指定 entry ， 那么 entry 就会变成 main。</p>
+
+<p>我们看一下 c7n-ui <a href="https://github.com/choerodon/choerodon-ui/blob/master/webpack.config.js#L16-L28">webpack 配置</a>： </p>
+
+<pre><code class="language-javascript">function addLocales(webpackConfig) {
+  let packageName = `${pkg.name}-with-locales`;
+  let packageNamePro = `${pkg.name}-pro-with-locales`;
+  if (webpackConfig.entry[`${pkg.name}.min`]) {
+    packageName += &#39;.min&#39;;
+  }
+  if (webpackConfig.entry[`${pkg.name}-pro.min`]) {
+    packageNamePro += &#39;.min&#39;;
+  }
+  webpackConfig.entry[packageName] = &#39;./index-with-locales.js&#39;;
+  webpackConfig.entry[packageNamePro] = &#39;./index-pro-with-locales.js&#39;;
+  webpackConfig.output.filename = &#39;[name].js&#39;;
+}
+</code></pre>
+
+<p>这里多输出了两个包含多语言数据的包。但是也修改了 entry name。 所以导致 <code>window[&quot;choerodon-ui&quot;]</code> 变成了 <code>window[&quot;choerodon-ui-with-locales&quot;]</code>,那么如何修改把它修复这个问题呢。</p>
+
+<p>既然是 webpack 的锅， 所以我去 webpack 官网找了一圈， 最终还是没有找到修改 dist 文件中的 entry name 的方法。</p>
+
+<p>最后想了一下, dist 的内容不就是文件内容的文本替换吗。 直接写一个 webpack plugins 就可以解决这个问题 ， 最后通过开发 webpack plugin 修改 webpack 输出 dist 指定生成的  global name </p>
+
+<p>webpack plugin 代码实现:</p>
+
+<pre><code class="language-javascript">
+const webpackConfig = {
+    plugins:[
+    {
+      apply: compiler =&gt; {
+        const replaceLibraryConfigList = [
+          {
+            from: /choerodon-ui(-with-locales(\.min)?)/gi,
+            to: &#39;choerodon-ui&#39;,
+          },
+          {
+            from: /choerodon-ui-pro(-with-locales(\.min)?)/gi,
+            to: &#39;choerodon-ui/pro&#39;,
+          },
+        ];
+        compiler.hooks.compilation.tap(&#39;compilation&#39;, compilation =&gt; {
+          const { mainTemplate, chunkTemplate } = compilation;
+          // eslint-disable-next-line no-restricted-syntax
+          for (const template of [mainTemplate, chunkTemplate]) {
+            template.hooks.renderWithEntry.tap(&#39;UmdMainTemplatePlugin&#39;, (source, entry) =&gt; {
+              const entryName = entry.name;
+              const findReplaceCfg = replaceLibraryConfigList.find(replaceCfg =&gt; {
+                return replaceCfg.from.test(entryName);
+              });
+              if (findReplaceCfg) {
+                let newSource = source;
+                let startPos = -1;
+                // eslint-disable-next-line no-cond-assign
+                while (
+                  (startPos = newSource
+                    .source()
+                    .indexOf(entryName, startPos &gt; 0 ? startPos : undefined)) !== -1
+                ) {
+                  newSource = new ReplaceSource(newSource);
+                  newSource.replace(startPos, startPos + entryName.length - 1, findReplaceCfg.to);
+                }
+                return newSource;
+              }
+              return source;
+            });
+          }
+        });
+      },
+    }]
+};
+</code></pre>
+
+<p><a href="https://github.com/choerodon/choerodon-ui/blob/master/webpack.config.js#L45">源码位置</a></p>
+
+<p>这个插件的原理很简单， 就是通过正则表达式找到  <code>window[&quot;choerodon-ui-with-locales&quot;]</code> 替换成  <code>window[&quot;choerodon-ui&quot;]</code></p>
+
+<p>处理之后生成的 dist：</p>
+
+<ul>
+<li><a href="https://unpkg.com/choerodon-ui@0.8.56/dist/choerodon-ui-with-locales.js">https://unpkg.com/choerodon-ui@0.8.56/dist/choerodon-ui-with-locales.js</a></li>
+</ul>
+
+<pre><code class="language-javascript">/*!
+ * 
+ * choerodon-ui v0.8.56
+ *       
+ */
+(function webpackUniversalModuleDefinition(root, factory) {
+    if(typeof exports === &#39;object&#39; &amp;&amp; typeof module === &#39;object&#39;)
+        module.exports = factory(require(&quot;mobx&quot;), require(&quot;moment&quot;), require(&quot;react&quot;), require(&quot;react-dom&quot;));
+    else if(typeof define === &#39;function&#39; &amp;&amp; define.amd)
+        define([&quot;mobx&quot;, &quot;moment&quot;, &quot;react&quot;, &quot;react-dom&quot;], factory);
+    else if(typeof exports === &#39;object&#39;)
+        exports[&quot;choerodon-ui&quot;] = factory(require(&quot;mobx&quot;), require(&quot;moment&quot;), require(&quot;react&quot;), require(&quot;react-dom&quot;));
+    else
+        root[&quot;choerodon-ui&quot;] = factory(root[&quot;mobx&quot;], root[&quot;moment&quot;], root[&quot;React&quot;], root[&quot;ReactDOM&quot;]);
+})(window, function(__WEBPACK_EXTERNAL_MODULE_mobx__, __WEBPACK_EXTERNAL_MODULE_moment__, __WEBPACK_EXTERNAL_MODULE_react__, __WEBPACK_EXTERNAL_MODULE_react_dom__) {});
+</code></pre>
+
+<p>到此，问题解决：</p>
+
+<p><img src="media/15835043241284/15835072613146.jpg" alt="" style="width:982px;"/></p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[前端持续集成（gitlab-ci 、 jenkins）]]></title>
@@ -373,6 +552,11 @@ tar -zcf dist.tar.gz ./dist
 <li><strong>Remote directory</strong>: 这个是上传到远程服务器位置，上传上去的文件还是一个压缩包，后面还有在这个目录下执行节约命令</li>
 <li><strong>Exec command</strong>: 在远程服务器上执行的 shell 命令</li>
 </ul>
+
+<pre><code class="language-bash">cd /data/nginx/wwwroot
+sudo rm -rf dist
+sudo tar -zxf dist.tar.gz
+</code></pre>
 
 <p>然后点击保存，再构建一次。<br/>
 <img src="media/15820942246314/15821793949244.jpg" alt="" style="width:1156px;"/></p>
