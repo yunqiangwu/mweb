@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>JavaScript异步编程的机制和相关编程技巧 | Wayne</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Wayne" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/localshare/css/share.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Wayne</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">有理想的码农</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/."><i class="fa fa-home"></i> 首页</a>
+        
+          <a class="main-nav-link" href="/archives/"><i class="fa fa-archive"></i> 归档</a>
+        
+          <a class="main-nav-link" href="/about/"><i class="fa fa-user"></i> 关于</a>
+        
+          <a class="main-nav-link" href="/atom.xml"><i class="fa fa-rss"></i> 订阅</a>
+        
+      </nav>
+    </div>
+    <div id="search-form">
+      <div id="result-mask" class="hide"></div>
+      <label><input id="search-key" type="text" autocomplete="off" placeholder="搜索"></label>
+      <div id="result-wrap" class="hide">
+        <div id="search-result"></div>
+      </div>
+      <div class="hide">
+        <template id="search-tpl">
+          <div class="item">
+            <a href="/{path}" title="{title}">
+              <div class="title">{title}</div>
+              <div class="time">{date}</div>
+              <div class="tags">{tags}</div>
+            </a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2018-05-19" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      JavaScript异步编程的机制和相关编程技巧
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2018-05-10T00:00:00.000Z" itemprop="datePublished">2018年05月10日</time>
+</span>
+      
+      
+        <span class="article-views">
+  <i class="fa fa-views"></i>
+  <i id="busuanzi_container_page_pv">
+      <i id="busuanzi_value_page_pv"></i>
+  </i>
+</span>
+
+      
+      
+<a href="/2018/05/10/2018-05-19/#comments" class="article-comment-link">
+  
+    
+    
+    
+    
+    
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="JavaScript异步编程的机制和相关编程技巧"><a href="#JavaScript异步编程的机制和相关编程技巧" class="headerlink" title="JavaScript异步编程的机制和相关编程技巧"></a>JavaScript异步编程的机制和相关编程技巧</h2><h3 id="JavaScript异步编程机制"><a href="#JavaScript异步编程机制" class="headerlink" title="JavaScript异步编程机制"></a>JavaScript异步编程机制</h3><p>JavaScript异步编程机制简单来说就是 callback 机制实现的效果。callback形式的代码写复杂的异步编程，很容易出现callback地狱的问题，不利于代码的维护和管理，而Promise和es6的async可以很好的解决这个问题，使得写异步编程编的非常简单。</p>
+<h4 id="Promise是什么"><a href="#Promise是什么" class="headerlink" title="Promise是什么"></a>Promise是什么</h4><p>简单来说，Promise 主要就是为了解决异步回调的问题。用 Promise 来处理异步回调使得代码层次清晰，便于理解，且更加容易维护。其主流规范目前主要是 <a target="_blank" rel="noopener" href="http://promisesaplus.com/">Promises&#x2F;A+</a> 。<br>Promise 原理大概就类似这个样子</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// demo.1.js</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">Promise</span>(<span class="params">fn</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> callback;</span><br><span class="line">    <span class="keyword">let</span> rejectCallback;</span><br><span class="line">    <span class="comment">//一个实例的方法，用来注册异步事件</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">then</span> = <span class="keyword">function</span> (<span class="params">done, errCallback</span>) &#123;</span><br><span class="line">        callback = done;</span><br><span class="line">        rejectCallback = errCallback;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">resolve</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="title function_">callback</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="title function_">fn</span>(resolve);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">        <span class="title function_">rejectCallback</span>(e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用<code>Promise</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">timeout3</span>(<span class="params">callback</span>) &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="title function_">callback</span>(<span class="string">&#x27;abcd&#x27;</span>)</span><br><span class="line">    &#125;, <span class="number">3000</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="title class_">Promise</span>(timeout3).<span class="title function_">then</span>(<span class="function">(<span class="params">data</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">3</span>)</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// # console: </span></span><br><span class="line"><span class="comment">// 3 (三秒后屏幕出现 )</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里只是简单的模拟一下Promise的代码，还有一下Promise的api没有全部实现，可以去深入研究Promise的源码，搞懂 Promise的 实现原理，能改使用Promise编程更加得心应手的.</p>
+<h3 id="使用Promise封装-node-的-http-request方法，实现简单的-fetch-api-效果"><a href="#使用Promise封装-node-的-http-request方法，实现简单的-fetch-api-效果" class="headerlink" title="使用Promise封装 node 的 http.request方法，实现简单的 fetch api 效果"></a>使用<code>Promise</code>封装 node 的 <code>http.request</code>方法，实现简单的 <code>fetch</code> api 效果</h3><h4 id="封装fetch-API"><a href="#封装fetch-API" class="headerlink" title="封装fetch API"></a>封装<code>fetch</code> API</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// demo.2.js</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> http=<span class="built_in">require</span>(<span class="string">&#x27;http&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">fetch</span> = (<span class="params">url,fetchOptions = &#123;&#125;</span>) =&gt;&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>)=&gt;</span>&#123;</span><br><span class="line">        <span class="keyword">var</span> match = <span class="regexp">/((http|ftp|https):\/\/)((([a-zA-Z0-9\._-]+\.[a-zA-Z]&#123;2,6&#125;)|([0-9]&#123;1,3&#125;\.[0-9]&#123;1,3&#125;\.[0-9]&#123;1,3&#125;\.[0-9]&#123;1,3&#125;))(:[0-9]&#123;1,4&#125;)*(\/[a-zA-Z0-9\&amp;\%_\.\/-~-]*)?)/</span>;</span><br><span class="line">        <span class="keyword">const</span> matchObj = match.<span class="title function_">exec</span>(url);</span><br><span class="line">        <span class="keyword">if</span>(!matchObj)&#123;</span><br><span class="line">            <span class="title function_">reject</span>(&#123;</span><br><span class="line">                <span class="attr">message</span>: url+<span class="string">&#x27;域名格式不正确&#x27;</span>,</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">const</span> [,,,,,hostname,,,,path] = matchObj;</span><br><span class="line">        <span class="keyword">var</span> options = &#123;</span><br><span class="line">            <span class="string">&quot;method&quot;</span>: <span class="string">&quot;GET&quot;</span>,</span><br><span class="line">            hostname,</span><br><span class="line">            path,</span><br><span class="line">        &#125;;  </span><br><span class="line">        <span class="keyword">var</span> req = http.<span class="title function_">request</span>(options, <span class="keyword">function</span> (<span class="params">res</span>) &#123;</span><br><span class="line">            <span class="keyword">var</span> chunks = [];</span><br><span class="line">        </span><br><span class="line">            res.<span class="title function_">on</span>(<span class="string">&quot;data&quot;</span>, <span class="keyword">function</span> (<span class="params">chunk</span>) &#123;</span><br><span class="line">                chunks.<span class="title function_">push</span>(chunk);</span><br><span class="line">            &#125;);</span><br><span class="line">        </span><br><span class="line">            res.<span class="title function_">on</span>(<span class="string">&#x27;error&#x27;</span>, <span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">                <span class="title function_">reject</span>(e);</span><br><span class="line">            &#125;)</span><br><span class="line">        </span><br><span class="line">            res.<span class="title function_">on</span>(<span class="string">&quot;end&quot;</span>, <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">                <span class="keyword">var</span> body = <span class="title class_">Buffer</span>.<span class="title function_">concat</span>(chunks);</span><br><span class="line">                <span class="title function_">resolve</span>(&#123;</span><br><span class="line">                    <span class="attr">json</span>:<span class="function">()=&gt;</span><span class="title class_">Promise</span>.<span class="title function_">resolve</span>(<span class="title class_">JSON</span>.<span class="title function_">parse</span>(body.<span class="title function_">toString</span>())),</span><br><span class="line">                    <span class="attr">blob</span>: <span class="function">()=&gt;</span><span class="title class_">Promise</span>.<span class="title function_">resolve</span>(body),</span><br><span class="line">                    <span class="attr">text</span>: <span class="function">()=&gt;</span><span class="title class_">Promise</span>.<span class="title function_">resolve</span>(body.<span class="title function_">toString</span>()),</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;);</span><br><span class="line">        req.<span class="title function_">end</span>();</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="简单的调用fetch"><a href="#简单的调用fetch" class="headerlink" title="简单的调用fetch"></a>简单的调用<code>fetch</code></h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">fetch</span>(<span class="string">&#x27;http://www.mmjpg.com/&#x27;</span>)</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function"><span class="params">data</span>=&gt;</span>data.<span class="title function_">text</span>())</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function"><span class="params">str</span>=&gt;</span>&#123;</span><br><span class="line">        <span class="comment">// 输出网页源码</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(str);</span><br><span class="line">    &#125;)</span><br></pre></td></tr></table></figure>
+<h4 id="fetch链式调用"><a href="#fetch链式调用" class="headerlink" title="fetch链式调用"></a><code>fetch</code>链式调用</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// demo.3.js</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> fetch = <span class="built_in">require</span>(<span class="string">&#x27;./demo.2&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="title function_">fetch</span>(<span class="string">&#x27;http://www.mmjpg.com/&#x27;</span>)</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function"><span class="params">data</span> =&gt;</span> data.<span class="title function_">text</span>())</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function"><span class="params">content</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> url = <span class="regexp">/(http:\/\/www.mmjpg.com\/mm\/\d+)/</span>.<span class="title function_">exec</span>(content)[<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_">fetch</span>(url).<span class="title function_">then</span>(<span class="function"><span class="params">data</span>=&gt;</span>data.<span class="title function_">text</span>())</span><br><span class="line">            .<span class="title function_">then</span>(<span class="function"><span class="params">data</span> =&gt;</span> &#123; </span><br><span class="line">                <span class="keyword">const</span> n = <span class="regexp">/var\s*picinfo\s*=\s*\[(\d+),(\d+),(\d+),(\d+)\]/</span>.<span class="title function_">exec</span>(data)[<span class="number">3</span>];</span><br><span class="line">                <span class="variable language_">console</span>.<span class="title function_">log</span>(n);</span><br><span class="line">                <span class="keyword">return</span> <span class="title class_">Array</span>.<span class="title function_">from</span>(&#123;<span class="attr">length</span>: n&#125;).<span class="title function_">map</span>(<span class="function">(<span class="params">item,index</span>)=&gt;</span>&#123;</span><br><span class="line">                    <span class="keyword">return</span> url+<span class="string">&#x27;/&#x27;</span>+(index+<span class="number">1</span>);</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;);</span><br><span class="line">    &#125;)</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function"><span class="params">imageUrls</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(imageUrls);</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// # console:</span></span><br><span class="line"><span class="comment">// 60</span></span><br><span class="line"><span class="comment">// [ &#x27;http://www.mmjpg.com/mm/1355/1&#x27;,</span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="comment">//   &#x27;http://www.mmjpg.com/mm/1355/59&#x27;,</span></span><br><span class="line"><span class="comment">//   &#x27;http://www.mmjpg.com/mm/1355/60&#x27; ]</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="fetch按顺序批量获取url内容"><a href="#fetch按顺序批量获取url内容" class="headerlink" title="fetch按顺序批量获取url内容"></a><code>fetch</code>按顺序批量获取url内容</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// demo.4.js</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> fetch = <span class="built_in">require</span>(<span class="string">&#x27;./demo.2&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> imgUrls = [<span class="string">&#x27;http://www.mmjpg.com/mm/1355/1&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/2&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/3&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/4&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/7&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/8&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/57&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/58&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/59&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/60&#x27;</span>];</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">fetchImg</span> = (<span class="params">urls, index=<span class="number">0</span>, currentResult = []</span>) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> url = urls[index];</span><br><span class="line">    <span class="keyword">if</span> (url) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_">fetch</span>(url)</span><br><span class="line">            .<span class="title function_">then</span>(<span class="function"><span class="params">data</span> =&gt;</span> data.<span class="title function_">blob</span>())</span><br><span class="line">            .<span class="title function_">then</span>(<span class="function"><span class="params">buffer</span> =&gt;</span> &#123;</span><br><span class="line">                <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Progress: &#x27;</span> + index + <span class="string">&#x27;/&#x27;</span> + urls.<span class="property">length</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="title function_">fetchImg</span>(urls, index + <span class="number">1</span>, [...currentResult, buffer])</span><br><span class="line">            &#125;)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title class_">Promise</span>.<span class="title function_">resolve</span>(currentResult);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">fetchImg</span>(imgUrls)</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function"><span class="params">bufferList</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="comment">// save imgBuffer to file...</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(bufferList.<span class="property">length</span>);</span><br><span class="line">    &#125;)</span><br><span class="line">    </span><br><span class="line"><span class="comment">// console: </span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">Progress: 0/60</span></span><br><span class="line"><span class="comment">Progress: 1/60</span></span><br><span class="line"><span class="comment">...</span></span><br><span class="line"><span class="comment">...</span></span><br><span class="line"><span class="comment">Progress: 58/60</span></span><br><span class="line"><span class="comment">Progress: 59/60</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+<h4 id="使用异步编程Promise-all优化后的效果"><a href="#使用异步编程Promise-all优化后的效果" class="headerlink" title="使用异步编程Promise.all优化后的效果"></a>使用异步编程<code>Promise.all</code>优化后的效果</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// demo.5.js</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> fetch = <span class="built_in">require</span>(<span class="string">&#x27;./demo.2&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> imgUrls = [<span class="string">&#x27;http://www.mmjpg.com/mm/1355/1&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/2&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/3&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/4&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/5&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/6&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/57&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/58&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/59&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/60&#x27;</span>];</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="title class_">Promise</span>.<span class="title function_">all</span>(imgUrls.<span class="title function_">map</span>(<span class="function"><span class="params">url</span>=&gt;</span><span class="title function_">fetch</span>(url).<span class="title function_">then</span>(<span class="function"><span class="params">data</span>=&gt;</span>data.<span class="title function_">blob</span>())))</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function"><span class="params">bufferList</span>=&gt;</span> &#123;</span><br><span class="line">        <span class="comment">// save imgBuffer to file...</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(bufferList.<span class="property">length</span>);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h4 id="es6中async使用-Promise-all"><a href="#es6中async使用-Promise-all" class="headerlink" title="es6中async使用 Promise.all"></a>es6中async使用 Promise.all</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// demo.6.js</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> fetch = <span class="built_in">require</span>(<span class="string">&#x27;./demo.2&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> imgUrls = [<span class="string">&#x27;http://www.mmjpg.com/mm/1355/1&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/2&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/3&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/4&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/5&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/6&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/7&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/8&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/9&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/10&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/11&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/12&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/13&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/14&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/15&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/16&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/17&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/18&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/19&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/20&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/21&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/22&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/23&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/24&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/25&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/26&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/27&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/28&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/29&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/30&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/31&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/32&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/33&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/34&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/35&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/36&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/37&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/38&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/39&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/40&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/41&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/42&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/43&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/44&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/45&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/46&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/47&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/48&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/49&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/50&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/51&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/52&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/53&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/54&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/55&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/56&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/57&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/58&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/59&#x27;</span>, <span class="string">&#x27;http://www.mmjpg.com/mm/1355/60&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span>  <span class="title function_">fetAllData</span> = <span class="keyword">async</span> (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> bufferList = <span class="keyword">await</span> <span class="title class_">Promise</span>.<span class="title function_">all</span>(imgUrls.<span class="title function_">map</span>(<span class="function"><span class="params">url</span>=&gt;</span><span class="title function_">fetch</span>(url).<span class="title function_">then</span>(<span class="function"><span class="params">data</span>=&gt;</span>data.<span class="title function_">blob</span>())));</span><br><span class="line">    <span class="comment">// save imgBuffer to file...</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(bufferList.<span class="property">lenght</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">fetAllData</span>();</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+        
+            <div id="toc-article">
+                
+  <div class="widget-wrap" id="toc-wrap">
+    <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
+    <div class="widget">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#JavaScript%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E7%9A%84%E6%9C%BA%E5%88%B6%E5%92%8C%E7%9B%B8%E5%85%B3%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7"><span class="toc-text">JavaScript异步编程的机制和相关编程技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#JavaScript%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%9C%BA%E5%88%B6"><span class="toc-text">JavaScript异步编程机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Promise%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">Promise是什么</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Promise%E5%B0%81%E8%A3%85-node-%E7%9A%84-http-request%E6%96%B9%E6%B3%95%EF%BC%8C%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84-fetch-api-%E6%95%88%E6%9E%9C"><span class="toc-text">使用Promise封装 node 的 http.request方法，实现简单的 fetch api 效果</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%81%E8%A3%85fetch-API"><span class="toc-text">封装fetch API</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84%E8%B0%83%E7%94%A8fetch"><span class="toc-text">简单的调用fetch</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#fetch%E9%93%BE%E5%BC%8F%E8%B0%83%E7%94%A8"><span class="toc-text">fetch链式调用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#fetch%E6%8C%89%E9%A1%BA%E5%BA%8F%E6%89%B9%E9%87%8F%E8%8E%B7%E5%8F%96url%E5%86%85%E5%AE%B9"><span class="toc-text">fetch按顺序批量获取url内容</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8BPromise-all%E4%BC%98%E5%8C%96%E5%90%8E%E7%9A%84%E6%95%88%E6%9E%9C"><span class="toc-text">使用异步编程Promise.all优化后的效果</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#es6%E4%B8%ADasync%E4%BD%BF%E7%94%A8-Promise-all"><span class="toc-text">es6中async使用 Promise.all</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </div>
+
+
+            </div>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="http://blog.jajabjbj.top/2018/05/10/2018-05-19/">http://blog.jajabjbj.top/2018/05/10/2018-05-19/</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li></ul>
+
+          
+    <div class="social-share">
+      <span>分享到:</span>
+    </div>
+
+
+
+        </div>
+      
+      
+        
+<nav id="article-nav">
+  
+    <a href="/2018/05/09/2018-05-21/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">older</strong>
+      <div class="article-nav-title">
+        
+          用 jest + gitlab-ci 搭建前端UI自动化测试环境
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/05/20/abcd-a-d-asd/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">newer</strong>
+      <div class="article-nav-title">
+        
+          《深入浅出NodeJS》 读书学习总结
+        
+      </div>
+    </a>
+  
+</nav>
+
+      
+      
+        
+
+
+
+
+
+
+
+
+      
+    </footer>
+  </div>
+</article>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-posts"></i> 最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/07/10/wasm/">什么是 wasm(webassembly) 技术</a>
+          </li>
+        
+          <li>
+            <a href="/2020/02/19/2020-02-19/">前端持续集成环境搭建</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/29/cache/">使用高阶组件实现页面的表单数据和state缓存</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/30/2018-05-30/">使用 openssl 生成证书</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/30/2018-05-31-1/">搭建 gitlab-ci 持续集成环境</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-tag"></i> 标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/css/" style="font-size: 10px;">css</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitab-ci/" style="font-size: 10px;">gitab-ci</a> <a href="/tags/gitlab-ci/" style="font-size: 10px;">gitlab-ci</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/jenkins/" style="font-size: 10px;">jenkins</a> <a href="/tags/k8s/" style="font-size: 10px;">k8s</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/react/" style="font-size: 10px;">react</a> <a href="/tags/wasm-webassembly-nodejs/" style="font-size: 10px;">wasm webassembly nodejs</a> <a href="/tags/webpack/" style="font-size: 20px;">webpack</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-link"></i> 友情链接</h3>
+    <div class="widget">
+      <ul>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://juejin.cn/user/3667626519435870/posts">我的掘金</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://juejin.cn/user/8451822983784/posts">我的掘金2</a>
+        </li>
+      
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020年</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018年</a><span class="archive-list-count">12</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <a id="totop" href="#top"></a>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <p>
+        <a href="/sitemap.xml">网站地图</a>
+        <span> | </span><a href="/atom.xml">订阅本站</a>
+        <span> | </span><a href="/about/">联系博主</a>
+      </p>
+      
+      <p>
+        <span>Copyright &copy; 2022 Wayne.</span>
+        <span>Theme by <a href="https://github.com/chaooo/hexo-theme-BlueLake/" target="_blank">BlueLake.</a></span>
+        <span>Powered by <a href="https://hexo.io/" target="_blank">Hexo.</a></span>
+        <div style="background: #ffffffbd; border-radius: 12px;  width: 240px; margin: 0 auto; display: flex; justify-content: center; align-items: center;" class="content___2IB17">
+          <div style="display: flex; justify-content: center; align-items: center; margin-left: 12px;">
+            <img style="width: 20px; height: 20px; margin-right: 4px;" src="data:image/gif;base64,R0lGODlhMgAyALMOAP6/Av6mAv4eAv54Av5OAv7tnv7gbP7YOv7+Av5kAv4xAv6XAv7OA/4DAv///wAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IFdpbmRvd3MiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QUM4RkQzMENFMzI4MTFFMDlCODBFRDg1OUUzMzg3RkMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QUM4RkQzMERFMzI4MTFFMDlCODBFRDg1OUUzMzg3RkMiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpBQzhGRDMwQUUzMjgxMUUwOUI4MEVEODU5RTMzODdGQyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpBQzhGRDMwQkUzMjgxMUUwOUI4MEVEODU5RTMzODdGQyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgH//v38+/r5+Pf29fTz8vHw7+7t7Ovq6ejn5uXk4+Lh4N/e3dzb2tnY19bV1NPS0dDPzs3My8rJyMfGxcTDwsHAv769vLu6ubi3trW0s7KxsK+urayrqqmop6alpKOioaCfnp2cm5qZmJeWlZSTkpGQj46NjIuKiYiHhoWEg4KBgH9+fXx7enl4d3Z1dHNycXBvbm1sa2ppaGdmZWRjYmFgX15dXFtaWVhXVlVUU1JRUE9OTUxLSklIR0ZFRENCQUA/Pj08Ozo5ODc2NTQzMjEwLy4tLCsqKSgnJiUkIyIhIB8eHRwbGhkYFxYVFBMSERAPDg0MCwoJCAcGBQQDAgEAACH5BAEAAA4ALAAAAAAyADIAAAT/0MlJq7046827/2AoOgbDHMWoTsVhvgBjrGBhADGzEETA5CiapoT7JQSNZEMwiBVnQoqruFNalYTF6xSVmAAD5HWcFCR8jJSwACa7rwnAIWoSXwWKvOJtEpYCd3FbJgEEYwNcKjcAe0pnRw1aDANLAwGNZSZzIjcMhkoLlFgmmAILCVYEmiE/l1YDokoKJmNVsmgMH7SvgGO7VgIAn0o/ah2/DbN2SgLIjghXfboMwJipP9Z8adNiCgl64AqSC+HgdtIeJY2WC+3u7/DwbcnoHTfZZHh5b7L1HGyo+DVA04ufqlwgdCQBEM/dloYLAixI0gSKrl4DEmjU6OPURo4M3AJ8/JZkAQBjHpwlmcVgWZIEP9z4s8cgIK5BOHH2YjlCYQOSA2uWy6NFVIJPMDexapkkgIBmNUduzIGnoA8VBwAEPIPIFRmYOgB0m3lRCaJJAcIAG9DuxzAtFkWYGEZA2M94huKUIvuhQEhgAUTeqbtgmcm4PWte6aE4EhiXPOkwwCew6bYoRCof4pu4oGawXSiYiCXwIMoubCZVPqg0tIQSPt3AlOPaAmynZM62rj0BRsAyaADwxuDCROEGZ02cHj6heE7mGvzm+IEY+oUpl61vWK69u/fv4MM7iAAAOw==" alt="" />
+            <a style="margin-left: 10px; color: #666979;" href="https://beian.miit.gov.cn" target="_blank" rel="noreferrer">湘ICP备16020172号-1</a>
+          </div>
+          <!-- <div style="display: flex; justify-content: center; align-items: center; margin-left: 12px;">
+            <img style="width: 20px; height: 20px; margin-right: 4px;" src="https://portal.open.hand-china.com/static/beian-icon.0c577066.png" alt="">
+            <a style="margin-left: 10px; color: #666979;" href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31011802002577" target="_blank" rel="noreferrer">湘公网安备 31011802002577号</a>
+          </div> -->
+        </div>
+      </p>
+    </div>
+  </div>
+</footer>
+
+    </div>
+  </div>
+  
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/search.json.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+
+
+  
+    
+<script src="/localshare/js/social-share.js"></script>
+
+    
+<script src="/localshare/js/qrcode.js"></script>
+
+  
+  
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body>
+</html>

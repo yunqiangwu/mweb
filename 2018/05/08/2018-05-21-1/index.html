@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>webpack引入第三方库方案总结 | Wayne</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Wayne" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/localshare/css/share.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Wayne</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">有理想的码农</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/."><i class="fa fa-home"></i> 首页</a>
+        
+          <a class="main-nav-link" href="/archives/"><i class="fa fa-archive"></i> 归档</a>
+        
+          <a class="main-nav-link" href="/about/"><i class="fa fa-user"></i> 关于</a>
+        
+          <a class="main-nav-link" href="/atom.xml"><i class="fa fa-rss"></i> 订阅</a>
+        
+      </nav>
+    </div>
+    <div id="search-form">
+      <div id="result-mask" class="hide"></div>
+      <label><input id="search-key" type="text" autocomplete="off" placeholder="搜索"></label>
+      <div id="result-wrap" class="hide">
+        <div id="search-result"></div>
+      </div>
+      <div class="hide">
+        <template id="search-tpl">
+          <div class="item">
+            <a href="/{path}" title="{title}">
+              <div class="title">{title}</div>
+              <div class="time">{date}</div>
+              <div class="tags">{tags}</div>
+            </a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2018-05-21-1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      webpack引入第三方库方案总结
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2018-05-08T00:00:00.000Z" itemprop="datePublished">2018年05月08日</time>
+</span>
+      
+      
+        <span class="article-views">
+  <i class="fa fa-views"></i>
+  <i id="busuanzi_container_page_pv">
+      <i id="busuanzi_value_page_pv"></i>
+  </i>
+</span>
+
+      
+      
+<a href="/2018/05/08/2018-05-21-1/#comments" class="article-comment-link">
+  
+    
+    
+    
+    
+    
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="webpack引入第三方库方案总结"><a href="#webpack引入第三方库方案总结" class="headerlink" title="webpack引入第三方库方案总结"></a>webpack引入第三方库方案总结</h2><blockquote>
+<p>在使用webpack打包项目时，最好尽量使用import的方式引入第三方库，但有些情况又必须使用其他方式引入第三方库…</p>
+</blockquote>
+<h3 id="要项目上必须要用一个-jQuery-插件形式的库"><a href="#要项目上必须要用一个-jQuery-插件形式的库" class="headerlink" title="要项目上必须要用一个 jQuery 插件形式的库"></a>要项目上必须要用一个 jQuery 插件形式的库</h3><p>而引入这个库之前必须要引入jQuery，因为插件里面可能会出现这样的代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line"><span class="keyword">var</span> jQuery = <span class="variable language_">window</span>.<span class="property">jQuery</span>,</span><br><span class="line">\\ ...</span><br><span class="line">\\ ...</span><br><span class="line"><span class="keyword">if</span> (!jQuery) <span class="keyword">throw</span> <span class="string">&#x27;MathQuill requires jQuery 1.4.3+ to be loaded first&#x27;</span>;</span><br><span class="line">\\ ...</span><br><span class="line">\\ ...</span><br><span class="line">\\ ...</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+<p>所以需要在webpack构建的项目中引入 第三方 js库，一般情况下引入第三方库有以下几种方式</p>
+<h4 id="直接引入"><a href="#直接引入" class="headerlink" title="直接引入"></a>直接引入</h4><p>直接引入的关键在于输出的配置，这里以var为例，如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"> output <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      filename <span class="punctuation">:</span> &#x27;<span class="punctuation">[</span>name<span class="punctuation">]</span>.js&#x27;<span class="punctuation">,</span></span><br><span class="line">       <span class="comment">//  devServer不可配置为绝对路径</span></span><br><span class="line">       <span class="comment">//publicPath: &quot;http://localhost:8080/dist/&quot;,</span></span><br><span class="line">       publicPath<span class="punctuation">:</span> <span class="string">&quot;/dist/&quot;</span><span class="punctuation">,</span></span><br><span class="line">       path <span class="punctuation">:</span> build<span class="punctuation">,</span></span><br><span class="line">       <span class="comment">//  umd包含了对amd、commonjs、var等多种规范的支持</span></span><br><span class="line">       <span class="comment">//   关键在于这里  </span></span><br><span class="line">       libraryTarget <span class="punctuation">:</span> &#x27;var&#x27;  </span><br><span class="line">   <span class="punctuation">&#125;</span><span class="punctuation">,</span>  </span><br><span class="line"><span class="comment">//  其他配置略</span></span><br><span class="line"> resolve<span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="comment">//extensions: [&#x27;&#x27;, &#x27;.js&#x27;, &#x27;.es6&#x27;, &#x27;.vue&#x27;],</span></span><br><span class="line">        alias<span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="comment">//  也可以不写</span></span><br><span class="line">            jquery<span class="punctuation">:</span> &#x27;jquery/dist/jquery.min.js&#x27;<span class="punctuation">,</span>  </span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>这样，在编译代码时，webpack会自动将jQuery打进代码，现在就可以引入代码了</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 可以直接引入jquery</span></span><br><span class="line"><span class="keyword">import</span> $ <span class="keyword">from</span> <span class="string">&#x27;jquery&#x27;</span></span><br><span class="line"><span class="comment">// 因为是commonjs规范，所以会按顺序加载，引用成功，如果是output为amd，则必须在requirejs中配置shim，否则失败</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;jquery-ui&#x27;</span> </span><br></pre></td></tr></table></figure>
+
+<h4 id="2-ProvidePlugin-难以引入插件"><a href="#2-ProvidePlugin-难以引入插件" class="headerlink" title="2. ProvidePlugin[难以引入插件]"></a>2. ProvidePlugin[难以引入插件]</h4><p>在webpack中添加插件ProvidePlugin</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">plugins</span>: [</span><br><span class="line">    <span class="keyword">new</span> webpack.<span class="title class_">ProvidePlugin</span>(&#123;</span><br><span class="line">      <span class="attr">$</span>: <span class="string">&quot;jquery&quot;</span>,</span><br><span class="line">      <span class="attr">jQuery</span>: <span class="string">&quot;jquery&quot;</span></span><br><span class="line">    &#125;),</span><br><span class="line">  ]</span><br><span class="line"><span class="comment">//  $函数会自动添加到当前模块的上下文，无需显示声明</span></span><br></pre></td></tr></table></figure>
+<p>问题是依旧没有全局的$函数，所以导入插件依旧会失败，并且如果有eslint这样的preLoads，调用语句也难以通过语法校验(因为没有声明$就直接使用)，仅这一点，对于我这样的代码处女座就难以接受。</p>
+<h4 id="3-expose-loader-推荐使用"><a href="#3-expose-loader-推荐使用" class="headerlink" title="3. expose-loader[推荐使用]"></a>3. expose-loader[推荐使用]</h4><p>不需要任何其他的插件配合，只要将下面的代码添加到所有的loader之前</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">   <span class="attr">test</span>: <span class="built_in">require</span>.<span class="title function_">resolve</span>(<span class="string">&#x27;jquery&#x27;</span>),</span><br><span class="line">   <span class="attr">loader</span>: <span class="string">&#x27;expose?jQuery!expose?$&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>引用时改为如下方式</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> $ <span class="keyword">from</span> <span class="string">&#x27;expose?$!jquery&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;jquery-ui&#x27;</span> <span class="comment">//插件可用   </span></span><br></pre></td></tr></table></figure>
+<p> imports-loader、script-loader同样可达到此效果，配置与功能都非常相似，在此不一一说明。</p>
+<h4 id="4-包装jquery-推荐使用"><a href="#4-包装jquery-推荐使用" class="headerlink" title="4. 包装jquery[推荐使用]"></a>4. 包装jquery[推荐使用]</h4><p>此方法只依赖于自己，完全不需要任何其他插件与加载器，创建jquery的包装对象jquery-vendor.js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> $ <span class="keyword">from</span> <span class="string">&#x27;jquery&#x27;</span></span><br><span class="line"><span class="variable language_">window</span>.<span class="property">$</span> = $</span><br><span class="line"><span class="variable language_">window</span>.<span class="property">jQuery</span> = $</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> $</span><br></pre></td></tr></table></figure>
+<p>以后引用jquery时指向jquery-vendor.js</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import $ from &#x27;../assets/jquery-vendor.js&#x27;</span><br><span class="line">import &#x27;jquery-ui&#x27;</span><br><span class="line">//  此时UI的方法全部可用，如果需要引用bootstrap，可参照此方法</span><br></pre></td></tr></table></figure>
+<p>为了调用方便，可在webpack配置文件中创建jquery-vendor.js的别名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">alias: &#123;</span><br><span class="line">    jquery        : &#x27;src/assets/jquery-vendor.js&#x27; //    将其指向jquery-vendor.js所在位置</span><br><span class="line">&#125;   </span><br></pre></td></tr></table></figure>
+<h3 id="2-第三方库需要通过-类似requirejs机制-异步加载其他依赖库"><a href="#2-第三方库需要通过-类似requirejs机制-异步加载其他依赖库" class="headerlink" title="2. 第三方库需要通过 类似requirejs机制 异步加载其他依赖库"></a>2. 第三方库需要通过 类似requirejs机制 异步加载其他依赖库</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这是 MathJax 数学表达式解析库 加载扩展的一段代码</span></span><br><span class="line"><span class="comment">// 该库需要加载 extensions 而且是通过在页面插入script的方式加载的</span></span><br><span class="line"><span class="attr">loader</span>: &#123;</span><br><span class="line">    <span class="attr">JS</span>: <span class="keyword">function</span> (<span class="params">k, m</span>) &#123;</span><br><span class="line">        <span class="keyword">var</span> j = <span class="variable language_">this</span>.<span class="title function_">fileName</span>(k);</span><br><span class="line">        <span class="keyword">var</span> i = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&quot;script&quot;</span>);</span><br><span class="line">        <span class="keyword">var</span> l = a.<span class="title class_">Callback</span>([<span class="string">&quot;loadTimeout&quot;</span>, <span class="variable language_">this</span>, k]);</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">loading</span>[k] = &#123;</span><br><span class="line">            <span class="attr">callback</span>: m,</span><br><span class="line">            <span class="attr">timeout</span>: <span class="built_in">setTimeout</span>(l, <span class="variable language_">this</span>.<span class="property">timeout</span>),</span><br><span class="line">            <span class="attr">status</span>: <span class="variable language_">this</span>.<span class="property">STATUS</span>.<span class="property">OK</span>,</span><br><span class="line">            <span class="attr">script</span>: i</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">loading</span>[k].<span class="property">message</span> = a.<span class="property">Message</span>.<span class="title class_">File</span>(j);</span><br><span class="line">        i.<span class="property">onerror</span> = l;</span><br><span class="line">        i.<span class="property">type</span> = <span class="string">&quot;text/javascript&quot;</span>;</span><br><span class="line">        i.<span class="property">src</span> = k + <span class="variable language_">this</span>.<span class="title function_">fileRev</span>(j);</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">head</span>.<span class="title function_">appendChild</span>(i)</span><br><span class="line">    &#125;, <span class="attr">CSS</span>: <span class="keyword">function</span> (<span class="params">j, l</span>) &#123;</span><br><span class="line">        <span class="keyword">var</span> i = <span class="variable language_">this</span>.<span class="title function_">fileName</span>(j);</span><br><span class="line">        <span class="keyword">var</span> k = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&quot;link&quot;</span>);</span><br><span class="line">        k.<span class="property">rel</span> = <span class="string">&quot;stylesheet&quot;</span>;</span><br><span class="line">        k.<span class="property">type</span> = <span class="string">&quot;text/css&quot;</span>;</span><br><span class="line">        k.<span class="property">href</span> = j + <span class="variable language_">this</span>.<span class="title function_">fileRev</span>(i);</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">loading</span>[j] = &#123;<span class="attr">callback</span>: l, <span class="attr">message</span>: a.<span class="property">Message</span>.<span class="title class_">File</span>(i), <span class="attr">status</span>: <span class="variable language_">this</span>.<span class="property">STATUS</span>.<span class="property">OK</span>&#125;;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">head</span>.<span class="title function_">appendChild</span>(k);</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">timer</span>.<span class="property">create</span>.<span class="title function_">call</span>(<span class="variable language_">this</span>, [<span class="variable language_">this</span>.<span class="property">timer</span>.<span class="property">file</span>, j], k)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<p>遇到这种情况，就不能用常规的方法引入第三方依赖，以上的方法都不适用，因为在编译期间不会再报错 但是在运行期间会报一个js文件加载404的错误。<br><img src="http://cdn-qiniu-blog.jajabjbj.top/15268396577912.jpg"><br>因为这是在运行之后通过注入script标签 加载插件 。而在编译时webpack不会检测到这种异步加载逻辑 并导入。</p>
+<p>我的解决方案：<br>    要使能够通过异步加载 ，必须保证 映入的库 和他的依赖文件 相对文章不变 ，整体放到 编译后的目录。<br>以引入 MathJax 数学表达式解析库为例  由于MathJax 的加载扩展（MathMenu）是用到 类似 requirejs的异步加载机制 ，所以需要引入mathquill 只能通过 script 标签引入，不能通过 import 引入 mathquill</p>
+<p>修改文件如下：</p>
+<h4 id="1-webpack-config-js"><a href="#1-webpack-config-js" class="headerlink" title="1. webpack.config.js:"></a>1. webpack.config.js:</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 在编译打包时 把 /src/lib/下的 js文件复制到 www(编译输出目录)/lib 目录</span><br><span class="line">new CopyWebpackPlugin([ &#123;from: &#x27;./src/lib&#x27;, to: &#x27;lib&#x27;&#125;]),               </span><br></pre></td></tr></table></figure>
+
+<h4 id="2-index-html"><a href="#2-index-html" class="headerlink" title="2. index.html:"></a>2. index.html:</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;./lib/polyvplayer/polyvplayer.min.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;./lib/jquery/dist/jquery.min.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;./lib/cat_mathjax/dist/MathJax.js?config=TeX-AMS-MML_HTMLorMML&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;./lib/cat_mathquill_build/mathquill.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;./lib/cat_mathquill_build/mathquill.css&quot;</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h4 id="3-添加文件夹：-x2F-src-x2F-lib"><a href="#3-添加文件夹：-x2F-src-x2F-lib" class="headerlink" title="3. 添加文件夹：&#x2F;src&#x2F;lib"></a>3. 添加文件夹：&#x2F;src&#x2F;lib</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/src/lib/jquery/ </span><br><span class="line">/src/lib/mathjax/</span><br></pre></td></tr></table></figure>
+
+
+
+        
+            <div id="toc-article">
+                
+  <div class="widget-wrap" id="toc-wrap">
+    <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
+    <div class="widget">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#webpack%E5%BC%95%E5%85%A5%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93"><span class="toc-text">webpack引入第三方库方案总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%81%E9%A1%B9%E7%9B%AE%E4%B8%8A%E5%BF%85%E9%A1%BB%E8%A6%81%E7%94%A8%E4%B8%80%E4%B8%AA-jQuery-%E6%8F%92%E4%BB%B6%E5%BD%A2%E5%BC%8F%E7%9A%84%E5%BA%93"><span class="toc-text">要项目上必须要用一个 jQuery 插件形式的库</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E5%BC%95%E5%85%A5"><span class="toc-text">直接引入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-ProvidePlugin-%E9%9A%BE%E4%BB%A5%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6"><span class="toc-text">2. ProvidePlugin[难以引入插件]</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-expose-loader-%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8"><span class="toc-text">3. expose-loader[推荐使用]</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%8C%85%E8%A3%85jquery-%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8"><span class="toc-text">4. 包装jquery[推荐使用]</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93%E9%9C%80%E8%A6%81%E9%80%9A%E8%BF%87-%E7%B1%BB%E4%BC%BCrequirejs%E6%9C%BA%E5%88%B6-%E5%BC%82%E6%AD%A5%E5%8A%A0%E8%BD%BD%E5%85%B6%E4%BB%96%E4%BE%9D%E8%B5%96%E5%BA%93"><span class="toc-text">2. 第三方库需要通过 类似requirejs机制 异步加载其他依赖库</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-webpack-config-js"><span class="toc-text">1. webpack.config.js:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-index-html"><span class="toc-text">2. index.html:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%B7%BB%E5%8A%A0%E6%96%87%E4%BB%B6%E5%A4%B9%EF%BC%9A-x2F-src-x2F-lib"><span class="toc-text">3. 添加文件夹：&#x2F;src&#x2F;lib</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </div>
+
+
+            </div>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="http://blog.jajabjbj.top/2018/05/08/2018-05-21-1/">http://blog.jajabjbj.top/2018/05/08/2018-05-21-1/</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/webpack/" rel="tag">webpack</a></li></ul>
+
+          
+    <div class="social-share">
+      <span>分享到:</span>
+    </div>
+
+
+
+        </div>
+      
+      
+        
+<nav id="article-nav">
+  
+  
+    <a href="/2018/05/09/2018-05-21/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">newer</strong>
+      <div class="article-nav-title">
+        
+          用 jest + gitlab-ci 搭建前端UI自动化测试环境
+        
+      </div>
+    </a>
+  
+</nav>
+
+      
+      
+        
+
+
+
+
+
+
+
+
+      
+    </footer>
+  </div>
+</article>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-posts"></i> 最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/07/10/wasm/">什么是 wasm(webassembly) 技术</a>
+          </li>
+        
+          <li>
+            <a href="/2020/02/19/2020-02-19/">前端持续集成环境搭建</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/29/cache/">使用高阶组件实现页面的表单数据和state缓存</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/30/2018-05-30/">使用 openssl 生成证书</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/30/2018-05-31-1/">搭建 gitlab-ci 持续集成环境</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-tag"></i> 标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/css/" style="font-size: 10px;">css</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitab-ci/" style="font-size: 10px;">gitab-ci</a> <a href="/tags/gitlab-ci/" style="font-size: 10px;">gitlab-ci</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/jenkins/" style="font-size: 10px;">jenkins</a> <a href="/tags/k8s/" style="font-size: 10px;">k8s</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/react/" style="font-size: 10px;">react</a> <a href="/tags/wasm-webassembly-nodejs/" style="font-size: 10px;">wasm webassembly nodejs</a> <a href="/tags/webpack/" style="font-size: 20px;">webpack</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-link"></i> 友情链接</h3>
+    <div class="widget">
+      <ul>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://juejin.cn/user/3667626519435870/posts">我的掘金</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://juejin.cn/user/8451822983784/posts">我的掘金2</a>
+        </li>
+      
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020年</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018年</a><span class="archive-list-count">12</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <a id="totop" href="#top"></a>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <p>
+        <a href="/sitemap.xml">网站地图</a>
+        <span> | </span><a href="/atom.xml">订阅本站</a>
+        <span> | </span><a href="/about/">联系博主</a>
+      </p>
+      
+      <p>
+        <span>Copyright &copy; 2022 Wayne.</span>
+        <span>Theme by <a href="https://github.com/chaooo/hexo-theme-BlueLake/" target="_blank">BlueLake.</a></span>
+        <span>Powered by <a href="https://hexo.io/" target="_blank">Hexo.</a></span>
+        <div style="background: #ffffffbd; border-radius: 12px;  width: 240px; margin: 0 auto; display: flex; justify-content: center; align-items: center;" class="content___2IB17">
+          <div style="display: flex; justify-content: center; align-items: center; margin-left: 12px;">
+            <img style="width: 20px; height: 20px; margin-right: 4px;" src="data:image/gif;base64,R0lGODlhMgAyALMOAP6/Av6mAv4eAv54Av5OAv7tnv7gbP7YOv7+Av5kAv4xAv6XAv7OA/4DAv///wAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IFdpbmRvd3MiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QUM4RkQzMENFMzI4MTFFMDlCODBFRDg1OUUzMzg3RkMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QUM4RkQzMERFMzI4MTFFMDlCODBFRDg1OUUzMzg3RkMiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpBQzhGRDMwQUUzMjgxMUUwOUI4MEVEODU5RTMzODdGQyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpBQzhGRDMwQkUzMjgxMUUwOUI4MEVEODU5RTMzODdGQyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgH//v38+/r5+Pf29fTz8vHw7+7t7Ovq6ejn5uXk4+Lh4N/e3dzb2tnY19bV1NPS0dDPzs3My8rJyMfGxcTDwsHAv769vLu6ubi3trW0s7KxsK+urayrqqmop6alpKOioaCfnp2cm5qZmJeWlZSTkpGQj46NjIuKiYiHhoWEg4KBgH9+fXx7enl4d3Z1dHNycXBvbm1sa2ppaGdmZWRjYmFgX15dXFtaWVhXVlVUU1JRUE9OTUxLSklIR0ZFRENCQUA/Pj08Ozo5ODc2NTQzMjEwLy4tLCsqKSgnJiUkIyIhIB8eHRwbGhkYFxYVFBMSERAPDg0MCwoJCAcGBQQDAgEAACH5BAEAAA4ALAAAAAAyADIAAAT/0MlJq7046827/2AoOgbDHMWoTsVhvgBjrGBhADGzEETA5CiapoT7JQSNZEMwiBVnQoqruFNalYTF6xSVmAAD5HWcFCR8jJSwACa7rwnAIWoSXwWKvOJtEpYCd3FbJgEEYwNcKjcAe0pnRw1aDANLAwGNZSZzIjcMhkoLlFgmmAILCVYEmiE/l1YDokoKJmNVsmgMH7SvgGO7VgIAn0o/ah2/DbN2SgLIjghXfboMwJipP9Z8adNiCgl64AqSC+HgdtIeJY2WC+3u7/DwbcnoHTfZZHh5b7L1HGyo+DVA04ufqlwgdCQBEM/dloYLAixI0gSKrl4DEmjU6OPURo4M3AJ8/JZkAQBjHpwlmcVgWZIEP9z4s8cgIK5BOHH2YjlCYQOSA2uWy6NFVIJPMDexapkkgIBmNUduzIGnoA8VBwAEPIPIFRmYOgB0m3lRCaJJAcIAG9DuxzAtFkWYGEZA2M94huKUIvuhQEhgAUTeqbtgmcm4PWte6aE4EhiXPOkwwCew6bYoRCof4pu4oGawXSiYiCXwIMoubCZVPqg0tIQSPt3AlOPaAmynZM62rj0BRsAyaADwxuDCROEGZ02cHj6heE7mGvzm+IEY+oUpl61vWK69u/fv4MM7iAAAOw==" alt="" />
+            <a style="margin-left: 10px; color: #666979;" href="https://beian.miit.gov.cn" target="_blank" rel="noreferrer">湘ICP备16020172号-1</a>
+          </div>
+          <!-- <div style="display: flex; justify-content: center; align-items: center; margin-left: 12px;">
+            <img style="width: 20px; height: 20px; margin-right: 4px;" src="https://portal.open.hand-china.com/static/beian-icon.0c577066.png" alt="">
+            <a style="margin-left: 10px; color: #666979;" href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31011802002577" target="_blank" rel="noreferrer">湘公网安备 31011802002577号</a>
+          </div> -->
+        </div>
+      </p>
+    </div>
+  </div>
+</footer>
+
+    </div>
+  </div>
+  
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/search.json.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+
+
+  
+    
+<script src="/localshare/js/social-share.js"></script>
+
+    
+<script src="/localshare/js/qrcode.js"></script>
+
+  
+  
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body>
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>搭建 gitlab-ci 持续集成环境 | Wayne</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Wayne" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/localshare/css/share.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Wayne</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">有理想的码农</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/."><i class="fa fa-home"></i> 首页</a>
+        
+          <a class="main-nav-link" href="/archives/"><i class="fa fa-archive"></i> 归档</a>
+        
+          <a class="main-nav-link" href="/about/"><i class="fa fa-user"></i> 关于</a>
+        
+          <a class="main-nav-link" href="/atom.xml"><i class="fa fa-rss"></i> 订阅</a>
+        
+      </nav>
+    </div>
+    <div id="search-form">
+      <div id="result-mask" class="hide"></div>
+      <label><input id="search-key" type="text" autocomplete="off" placeholder="搜索"></label>
+      <div id="result-wrap" class="hide">
+        <div id="search-result"></div>
+      </div>
+      <div class="hide">
+        <template id="search-tpl">
+          <div class="item">
+            <a href="/{path}" title="{title}">
+              <div class="title">{title}</div>
+              <div class="time">{date}</div>
+              <div class="tags">{tags}</div>
+            </a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2018-05-31-1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      搭建 gitlab-ci 持续集成环境
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2018-05-30T00:00:00.000Z" itemprop="datePublished">2018年05月30日</time>
+</span>
+      
+      
+        <span class="article-views">
+  <i class="fa fa-views"></i>
+  <i id="busuanzi_container_page_pv">
+      <i id="busuanzi_value_page_pv"></i>
+  </i>
+</span>
+
+      
+      
+<a href="/2018/05/30/2018-05-31-1/#comments" class="article-comment-link">
+  
+    
+    
+    
+    
+    
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="搭建-gitlab-ci-持续集成环境"><a href="#搭建-gitlab-ci-持续集成环境" class="headerlink" title="搭建 gitlab-ci 持续集成环境"></a>搭建 gitlab-ci 持续集成环境</h2><h3 id="安装docker"><a href="#安装docker" class="headerlink" title="安装docker"></a>安装docker</h3><p><a target="_blank" rel="noopener" href="https://www.docker.com/get-docker">https://www.docker.com/get-docker</a></p>
+<h3 id="添加-hosts"><a href="#添加-hosts" class="headerlink" title="添加 hosts"></a>添加 hosts</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 「192.168.99.1 」 为宿主机的ip</span><br><span class="line">192.168.99.1  gitlab.jajabjbj.top</span><br><span class="line">192.168.99.1  rancher.jajabjbj.top</span><br><span class="line">192.168.99.1  jenkins.jajabjbj.top</span><br><span class="line">192.168.99.1  docker.jajabjbj.top</span><br><span class="line">192.168.99.1  harbor.jajabjbj.top</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>注意： 这里不能使用127.0.0.1，应为在docker容器中的127.0.0.1 和宿主机的127.0.0.1是两个不同的ip，如果docker容器内解析这个域名就好得到错误的ip，这里「192.168.99.1 」 为你宿主机电脑上面的虚拟网卡的固定ip，可以安装 VirtrualBox 等软件后，宿主机上面会自动创建虚拟网卡。</p>
+<h3 id="安装-nginx-proxy"><a href="#安装-nginx-proxy" class="headerlink" title="安装 nginx proxy"></a>安装 nginx proxy</h3><p>安装 nginx-proxy 的目的是为了让宿主机器通过一个端口号，向外以多个不同容器的方式提供多个服务。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">sudo docker run -d -p 80:80 --name nginx-proxy \</span><br><span class="line">    -v /var/run/docker.sock:/tmp/docker.sock:ro \</span><br><span class="line">    jwilder/nginx-proxy</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="安装gitlab"><a href="#安装gitlab" class="headerlink" title="安装gitlab"></a>安装gitlab</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">mkdir -p /srv/gitlab</span><br><span class="line"></span><br><span class="line">sudo docker run -d --privileged \</span><br><span class="line">    --env GITLAB_OMNIBUS_CONFIG=&quot;external_url &#x27;http://gitlab.jajabjbj.top/&#x27;&quot; \</span><br><span class="line">    --env VIRTUAL_HOST=gitlab.jajabjbj.top \</span><br><span class="line">    --name gitlab \</span><br><span class="line">    --restart always \</span><br><span class="line">    --volume /srv/gitlab/config:/etc/gitlab \</span><br><span class="line">    --volume /srv/gitlab/logs:/var/log/gitlab \</span><br><span class="line">    --volume /srv/gitlab/data:/var/opt/gitlab \</span><br><span class="line">    gitlab/gitlab-ce:latest</span><br><span class="line">    </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># pages 服务</span><br><span class="line">gitlab_rails[&#x27;lfs_enabled&#x27;] = true</span><br><span class="line"></span><br><span class="line">pages_external_url &#x27;http://gitlab.jajabjbj.top&#x27;</span><br><span class="line"></span><br><span class="line">gitlab_rails[&#x27;pages_path&#x27;] =  &quot;/tmp/pages&quot;</span><br><span class="line"></span><br><span class="line">gitlab_rails[&#x27;lfs_enabled&#x27;] =  true</span><br></pre></td></tr></table></figure>
+<h3 id="安装并添加-gitlab-runner"><a href="#安装并添加-gitlab-runner" class="headerlink" title="安装并添加 gitlab-runner"></a>安装并添加 gitlab-runner</h3><h4 id="docker-镜像运行方式"><a href="#docker-镜像运行方式" class="headerlink" title="docker 镜像运行方式"></a>docker 镜像运行方式</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt; mkdir -p /srv/gitlab/gitlab-runner</span><br><span class="line">&gt; docker run -d --name gitlab-runner --restart always \</span><br><span class="line">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">  -v /srv/gitlab-runner/config:/etc/gitlab-runner \</span><br><span class="line">  gitlab/gitlab-runner:latest</span><br><span class="line">  </span><br></pre></td></tr></table></figure>
+<p>在gitlab 上创建一个项目，打开项目CI设置，在项目里面添加一个 gitlab-runner</p>
+<p>添加界面会提供一个「gitlab-ci token」： UbK4qdLj1hvBsVxTSUJ5</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">  </span><br><span class="line">&gt; docker exec -it gitlab-runner bash</span><br><span class="line">&gt; gitlab-ci-multi-runner register \</span><br><span class="line">    --docker-volumes /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">    --docker-privileged</span><br><span class="line"></span><br><span class="line">Running in system-mode.</span><br><span class="line"></span><br><span class="line">Please enter the gitlab-ci coordinator URL (e.g. https://gitlab.com/):</span><br><span class="line">http://gitlab.jajabjbj.top/</span><br><span class="line">Please enter the gitlab-ci token for this runner:</span><br><span class="line">UbK4qdLj1hvBsVxTSUJ5</span><br><span class="line">Please enter the gitlab-ci description for this runner:</span><br><span class="line">[4857c90d8789]: mac-docker</span><br><span class="line">Please enter the gitlab-ci tags for this runner (comma separated):</span><br><span class="line"></span><br><span class="line">Whether to lock the Runner to current project [true/false]:</span><br><span class="line">[true]: false</span><br><span class="line">Registering runner... succeeded                     runner=UbK4qdLj</span><br><span class="line">Please enter the executor: shell, ssh, docker+machine, docker, docker-ssh, parallels, virtualbox, docker-ssh+machine, kubernetes:</span><br><span class="line">docker</span><br><span class="line">Please enter the default Docker image (e.g. ruby:2.1):</span><br><span class="line">node</span><br><span class="line">Runner registered successfully. Feel free to start it, but if it&#x27;s running already the config should be automatically reloaded!</span><br></pre></td></tr></table></figure>
+
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>gitlab-ci 中要使用docker in docker 时, 必须在gitlab-ci.yml 中添加  docker:dind ：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">image: docker:latest</span><br><span class="line">services:</span><br><span class="line">  - docker:dind</span><br></pre></td></tr></table></figure>
+
+
+
+        
+            <div id="toc-article">
+                
+  <div class="widget-wrap" id="toc-wrap">
+    <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
+    <div class="widget">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%AD%E5%BB%BA-gitlab-ci-%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E7%8E%AF%E5%A2%83"><span class="toc-text">搭建 gitlab-ci 持续集成环境</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85docker"><span class="toc-text">安装docker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0-hosts"><span class="toc-text">添加 hosts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-nginx-proxy"><span class="toc-text">安装 nginx proxy</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85gitlab"><span class="toc-text">安装gitlab</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E5%B9%B6%E6%B7%BB%E5%8A%A0-gitlab-runner"><span class="toc-text">安装并添加 gitlab-runner</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#docker-%E9%95%9C%E5%83%8F%E8%BF%90%E8%A1%8C%E6%96%B9%E5%BC%8F"><span class="toc-text">docker 镜像运行方式</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F"><span class="toc-text">注意</span></a></li></ol>
+    </div>
+  </div>
+
+
+            </div>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="http://blog.jajabjbj.top/2018/05/30/2018-05-31-1/">http://blog.jajabjbj.top/2018/05/30/2018-05-31-1/</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gitlab-ci/" rel="tag">gitlab-ci</a></li></ul>
+
+          
+    <div class="social-share">
+      <span>分享到:</span>
+    </div>
+
+
+
+        </div>
+      
+      
+        
+<nav id="article-nav">
+  
+    <a href="/2018/05/30/2018-05-31/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">older</strong>
+      <div class="article-nav-title">
+        
+          使用 nginx-proxy 实现多个 docker容器以不同的域名共享宿主机80端口对外提供服务
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/05/30/2018-05-30/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">newer</strong>
+      <div class="article-nav-title">
+        
+          使用 openssl 生成证书
+        
+      </div>
+    </a>
+  
+</nav>
+
+      
+      
+        
+
+
+
+
+
+
+
+
+      
+    </footer>
+  </div>
+</article>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-posts"></i> 最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/07/10/wasm/">什么是 wasm(webassembly) 技术</a>
+          </li>
+        
+          <li>
+            <a href="/2020/02/19/2020-02-19/">前端持续集成环境搭建</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/29/cache/">使用高阶组件实现页面的表单数据和state缓存</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/30/2018-05-30/">使用 openssl 生成证书</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/30/2018-05-31-1/">搭建 gitlab-ci 持续集成环境</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-tag"></i> 标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/css/" style="font-size: 10px;">css</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitab-ci/" style="font-size: 10px;">gitab-ci</a> <a href="/tags/gitlab-ci/" style="font-size: 10px;">gitlab-ci</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/jenkins/" style="font-size: 10px;">jenkins</a> <a href="/tags/k8s/" style="font-size: 10px;">k8s</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/react/" style="font-size: 10px;">react</a> <a href="/tags/wasm-webassembly-nodejs/" style="font-size: 10px;">wasm webassembly nodejs</a> <a href="/tags/webpack/" style="font-size: 20px;">webpack</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-link"></i> 友情链接</h3>
+    <div class="widget">
+      <ul>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://juejin.cn/user/3667626519435870/posts">我的掘金</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://juejin.cn/user/8451822983784/posts">我的掘金2</a>
+        </li>
+      
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020年</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018年</a><span class="archive-list-count">12</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <a id="totop" href="#top"></a>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <p>
+        <a href="/sitemap.xml">网站地图</a>
+        <span> | </span><a href="/atom.xml">订阅本站</a>
+        <span> | </span><a href="/about/">联系博主</a>
+      </p>
+      
+      <p>
+        <span>Copyright &copy; 2022 Wayne.</span>
+        <span>Theme by <a href="https://github.com/chaooo/hexo-theme-BlueLake/" target="_blank">BlueLake.</a></span>
+        <span>Powered by <a href="https://hexo.io/" target="_blank">Hexo.</a></span>
+        <div style="background: #ffffffbd; border-radius: 12px;  width: 240px; margin: 0 auto; display: flex; justify-content: center; align-items: center;" class="content___2IB17">
+          <div style="display: flex; justify-content: center; align-items: center; margin-left: 12px;">
+            <img style="width: 20px; height: 20px; margin-right: 4px;" src="data:image/gif;base64,R0lGODlhMgAyALMOAP6/Av6mAv4eAv54Av5OAv7tnv7gbP7YOv7+Av5kAv4xAv6XAv7OA/4DAv///wAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IFdpbmRvd3MiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QUM4RkQzMENFMzI4MTFFMDlCODBFRDg1OUUzMzg3RkMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QUM4RkQzMERFMzI4MTFFMDlCODBFRDg1OUUzMzg3RkMiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpBQzhGRDMwQUUzMjgxMUUwOUI4MEVEODU5RTMzODdGQyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpBQzhGRDMwQkUzMjgxMUUwOUI4MEVEODU5RTMzODdGQyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgH//v38+/r5+Pf29fTz8vHw7+7t7Ovq6ejn5uXk4+Lh4N/e3dzb2tnY19bV1NPS0dDPzs3My8rJyMfGxcTDwsHAv769vLu6ubi3trW0s7KxsK+urayrqqmop6alpKOioaCfnp2cm5qZmJeWlZSTkpGQj46NjIuKiYiHhoWEg4KBgH9+fXx7enl4d3Z1dHNycXBvbm1sa2ppaGdmZWRjYmFgX15dXFtaWVhXVlVUU1JRUE9OTUxLSklIR0ZFRENCQUA/Pj08Ozo5ODc2NTQzMjEwLy4tLCsqKSgnJiUkIyIhIB8eHRwbGhkYFxYVFBMSERAPDg0MCwoJCAcGBQQDAgEAACH5BAEAAA4ALAAAAAAyADIAAAT/0MlJq7046827/2AoOgbDHMWoTsVhvgBjrGBhADGzEETA5CiapoT7JQSNZEMwiBVnQoqruFNalYTF6xSVmAAD5HWcFCR8jJSwACa7rwnAIWoSXwWKvOJtEpYCd3FbJgEEYwNcKjcAe0pnRw1aDANLAwGNZSZzIjcMhkoLlFgmmAILCVYEmiE/l1YDokoKJmNVsmgMH7SvgGO7VgIAn0o/ah2/DbN2SgLIjghXfboMwJipP9Z8adNiCgl64AqSC+HgdtIeJY2WC+3u7/DwbcnoHTfZZHh5b7L1HGyo+DVA04ufqlwgdCQBEM/dloYLAixI0gSKrl4DEmjU6OPURo4M3AJ8/JZkAQBjHpwlmcVgWZIEP9z4s8cgIK5BOHH2YjlCYQOSA2uWy6NFVIJPMDexapkkgIBmNUduzIGnoA8VBwAEPIPIFRmYOgB0m3lRCaJJAcIAG9DuxzAtFkWYGEZA2M94huKUIvuhQEhgAUTeqbtgmcm4PWte6aE4EhiXPOkwwCew6bYoRCof4pu4oGawXSiYiCXwIMoubCZVPqg0tIQSPt3AlOPaAmynZM62rj0BRsAyaADwxuDCROEGZ02cHj6heE7mGvzm+IEY+oUpl61vWK69u/fv4MM7iAAAOw==" alt="" />
+            <a style="margin-left: 10px; color: #666979;" href="https://beian.miit.gov.cn" target="_blank" rel="noreferrer">湘ICP备16020172号-1</a>
+          </div>
+          <!-- <div style="display: flex; justify-content: center; align-items: center; margin-left: 12px;">
+            <img style="width: 20px; height: 20px; margin-right: 4px;" src="https://portal.open.hand-china.com/static/beian-icon.0c577066.png" alt="">
+            <a style="margin-left: 10px; color: #666979;" href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31011802002577" target="_blank" rel="noreferrer">湘公网安备 31011802002577号</a>
+          </div> -->
+        </div>
+      </p>
+    </div>
+  </div>
+</footer>
+
+    </div>
+  </div>
+  
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/search.json.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+
+
+  
+    
+<script src="/localshare/js/social-share.js"></script>
+
+    
+<script src="/localshare/js/qrcode.js"></script>
+
+  
+  
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body>
+</html>

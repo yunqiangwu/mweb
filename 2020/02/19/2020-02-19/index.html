@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>前端持续集成环境搭建 | Wayne</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Wayne" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/localshare/css/share.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Wayne</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">有理想的码农</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/."><i class="fa fa-home"></i> 首页</a>
+        
+          <a class="main-nav-link" href="/archives/"><i class="fa fa-archive"></i> 归档</a>
+        
+          <a class="main-nav-link" href="/about/"><i class="fa fa-user"></i> 关于</a>
+        
+          <a class="main-nav-link" href="/atom.xml"><i class="fa fa-rss"></i> 订阅</a>
+        
+      </nav>
+    </div>
+    <div id="search-form">
+      <div id="result-mask" class="hide"></div>
+      <label><input id="search-key" type="text" autocomplete="off" placeholder="搜索"></label>
+      <div id="result-wrap" class="hide">
+        <div id="search-result"></div>
+      </div>
+      <div class="hide">
+        <template id="search-tpl">
+          <div class="item">
+            <a href="/{path}" title="{title}">
+              <div class="title">{title}</div>
+              <div class="time">{date}</div>
+              <div class="tags">{tags}</div>
+            </a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2020-02-19" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      前端持续集成环境搭建
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2020-02-19T00:00:00.000Z" itemprop="datePublished">2020年02月19日</time>
+</span>
+      
+      
+        <span class="article-views">
+  <i class="fa fa-views"></i>
+  <i id="busuanzi_container_page_pv">
+      <i id="busuanzi_value_page_pv"></i>
+  </i>
+</span>
+
+      
+      
+<a href="/2020/02/19/2020-02-19/#comments" class="article-comment-link">
+  
+    
+    
+    
+    
+    
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="jenkins-nginx-实现持续集成"><a href="#jenkins-nginx-实现持续集成" class="headerlink" title="jenkins + nginx 实现持续集成"></a>jenkins + nginx 实现持续集成</h2><h3 id="搭建jenkins"><a href="#搭建jenkins" class="headerlink" title="搭建jenkins"></a>搭建jenkins</h3><p>jenkins 是一个开源持续集成工具，安装非常简单，为了管理方便，这里使用 docker 进行安装。</p>
+<h4 id="安装-docker"><a href="#安装-docker" class="headerlink" title="安装 docker"></a>安装 docker</h4><p>centos 安装 docker </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install docker</span><br></pre></td></tr></table></figure>
+<p>启动 docker 服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start docker</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装-jenkins"><a href="#安装-jenkins" class="headerlink" title="安装 jenkins"></a>安装 jenkins</h4><p>创建 jenkins 数据持久化目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> -p /data</span><br><span class="line">sudo <span class="built_in">chmod</span> 777 /data</span><br><span class="line"><span class="built_in">mkdir</span> -p /data/jenkins_home</span><br></pre></td></tr></table></figure>
+
+<p>通过docker容器安装jenkins</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">docker run \</span><br><span class="line">  -u root \</span><br><span class="line">  --<span class="built_in">rm</span> \</span><br><span class="line">  --name jenkins-server \</span><br><span class="line">  -d \</span><br><span class="line">  -p 8080:8080 \</span><br><span class="line">  -p 50000:50000 \</span><br><span class="line">  -v /data/jenkins_home:/var/jenkins_home \</span><br><span class="line">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">  registry.cn-hangzhou.aliyuncs.com/hzero-cli/jenkins</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>关于 docker 命令的学习可以看这里 👉 <a target="_blank" rel="noopener" href="https://www.runoob.com/docker/docker-command-manual.html">Docker 命令大全</a></p>
+</blockquote>
+<p><img src="/images/15820942246314/15820967152707.jpg" alt="-w470"></p>
+<p>上面命令运行完成之后我们就已经成功运行了 jenkins 服务</p>
+<p>我们可以打开地址 https:&#x2F;&#x2F;<code>centos服务器ip</code>:8080，可以看到 jenkins 的界面。</p>
+<blockquote>
+<p>这里的 <code>centos服务器ip</code> 就是你自己的服务器 ip，在这个教程里面，我们演示的服务器ip是 <code>172.22.0.4</code>。</p>
+</blockquote>
+<p><img src="/images/15820942246314/15820961636958.jpg" alt="-w1091"></p>
+<p>接下来我们需要获取jenkins初始化密码。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it jenkins-server \</span><br><span class="line">    <span class="built_in">cat</span> /var/jenkins_home/secrets/initialAdminPassword</span><br></pre></td></tr></table></figure>
+<p><img src="/images/15820942246314/15820967619904.jpg" alt="-w455"></p>
+<p>这里返回的一段字符串<code>6c46ccc61c804279a1017b743ab22aa4</code>就是我们需要的密码</p>
+<p>输入密码之后，选择安装初始化的插件</p>
+<p><img src="/images/15820942246314/15820971428778.jpg" alt="-w1013"><br><img src="/images/15820942246314/15820972130894.jpg" alt="-w997"><br>插件安装好之后，系统会提示你设置用户名密码，当然你也可以不设置，直接用 admin 账号。重新进入 jenkins 界面。<br><img src="/images/15820942246314/15820988660511.jpg" alt="-w689"><br>点击输入账号里面，这里的密码就是上文获取到的 jenkins 初始化密码 <code>6c46ccc61c804279a1017b743ab22aa4</code>，点击登录，进入系统:<br><img src="/images/15820942246314/15820989609929.jpg" alt="-w696"></p>
+<p>到此为止。jenkins 就算是安装好了</p>
+<blockquote>
+<p>我们如果想要卸载 jenkins 的话，只需要运行 <code>docker rm -f jenkins-server</code> 就可以了。</p>
+<p>因为我们配置了 jenkins 数据持久化的目录 <code>/data/jenkins_home</code>， 只要这个文件夹还在，jenkins 配置就可以一直保留，下次想运行 jenkins 是，运行上文安装 jenkins 的 docker run 命令就可以恢复 docker 运行了。</p>
+</blockquote>
+<h3 id="配置-jenkins-的-nodejs-插件"><a href="#配置-jenkins-的-nodejs-插件" class="headerlink" title="配置 jenkins 的 nodejs 插件"></a>配置 jenkins 的 nodejs 插件</h3><p>安装完 jenkins 之后， 需要配置一下 nodejs 插件，后面才能让 jenkins 跑前端持续集成任务。</p>
+<p>点击 <strong>系统管理</strong>  进入 jenkins 系统管理页面<br><img src="/images/15820942246314/15820991787999.jpg" alt="-w315"></p>
+<p>点击 <strong>插件管理</strong> 进入插件管理<br><img src="/images/15820942246314/15821002348355.jpg" alt="-w1021"></p>
+<p>进入 <strong>可选插件</strong> 选项卡，搜索并安装 <code>nodejs</code> 插件<br><img src="/images/15820942246314/15821180399210.jpg" alt="-w1120"></p>
+<p>勾选 <code>安装完成后重启选项</code>，安装完插件之后 jenkins 会 <strong>自动重启</strong></p>
+<p><img src="/images/15820942246314/15821181345609.jpg" alt="-w554"></p>
+<p>进入 <strong>全局工具配置</strong> 配置 nodejs 全局工具</p>
+<p><img src="/images/15820942246314/15821182607013.jpg" alt="-w931"></p>
+<p>点击 <strong>新增 NodeJS</strong> 按键新增一个 nodejs 全局工具，勾选 <strong>自动安装</strong></p>
+<p><img src="/images/15820942246314/15821185123655.jpg" alt="15821185123655"></p>
+<p>注意:</p>
+<ul>
+<li>安装 nodejs 时需要安装两个 node 全局命令 <code>yarn</code> 和 <code>lerna</code>, 然后点击保存。</li>
+</ul>
+<h3 id="测试-nodejs-插件"><a href="#测试-nodejs-插件" class="headerlink" title="测试 nodejs 插件"></a>测试 nodejs 插件</h3><p>我们安装完了 nodejs 插件之后，先回到首页 新建一个 jenkins 任务测试一下 nodejs。</p>
+<p>点击 <strong>创建一个新任务</strong> 打开任务编辑界面<br><img src="/images/15820942246314/15821185754719.jpg" alt="-w630"><br>选择 <strong>构建自由风格的软件项目</strong>， 输入一个任务名字<code>test-node-demo</code>:<br><img src="/images/15820942246314/15821187127960.jpg" alt="-w718"></p>
+<p>在构建环境这里选择我们刚刚配置的 nodejs 全局工具</p>
+<p><img src="/images/15820942246314/15821187744475.jpg" alt="-w734"></p>
+<p>在构建这里 点击 <strong>增加构建步骤</strong> ，在弹出的选项中选择 <strong>执行shell</strong> ：</p>
+<p><img src="/images/15820942246314/15821188924270.jpg" alt="-w359"></p>
+<p>在命令输入框中输入,然后点击保存按钮</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">node -e &#x27;console.log(&quot;Hello Hzero!&quot;);&#x27;</span><br><span class="line">node --version</span><br></pre></td></tr></table></figure>
+<p><img src="/images/15820942246314/15821190991233.jpg" alt="-w758"></p>
+<p>然后点击这个任务的 <strong>立即构建</strong> 按钮</p>
+<p>构建时，在下面会出现一个进度条，点击进度条 可以看执行的日志</p>
+<p><img src="/images/15820942246314/15821191550792.jpg" alt="-w624"></p>
+<p>进入日志之后，将看到看到如下信息</p>
+<p><img src="/images/15820942246314/15821240438051.jpg" alt="-w1061"></p>
+<p>到此，nodejs 插件测试成功！</p>
+<h3 id="安装-nginx"><a href="#安装-nginx" class="headerlink" title="安装 nginx"></a>安装 nginx</h3><p>centos 安装 nginx 也非常简单 ，一句命令 <code>sudo yum install nginx</code> 就能搞定， 但是这样安装 nginx 之后，配置管理和nginx升级都比较麻烦，所以我们这里用 docker 来安装 nginx 。</p>
+<p>这里我们先定义两个文件目录，用来保存 nginx 的部署文件和 nginx 的配置</p>
+<ul>
+<li><code>/data/nginx/wwwroot</code> nginx 的部署文件夹</li>
+<li><code>/data/nginx/nginx_hzero.conf</code> hzero 的 nginx 配置</li>
+</ul>
+<p>首先创建 nginx 数据持久化文件夹和 配置保存文件夹,</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> -p /data/nginx/wwwroot</span><br><span class="line">sudo <span class="built_in">mkdir</span> -p /data/nginx/cfg</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/15820942246314/15821112605783.jpg" alt="-w380"></p>
+<p>创建 nginx 配置文件, 保存在 <code>/data/nginx/cfg/nginx_hzero.conf</code></p>
+<p>在命令行运行下面命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /data/nginx/cfg/nginx_hzero.conf</span></span><br><span class="line"></span><br><span class="line">sudo -s <span class="comment"># 进入root用户模式</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; /data/nginx/cfg/nginx_hzero.conf &lt;&lt; <span class="string">END</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">server &#123;</span></span><br><span class="line"><span class="string">    listen       80;</span></span><br><span class="line"><span class="string">    server_name  localhost;</span></span><br><span class="line"><span class="string">    root   /usr/share/nginx/html/dist;</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    location / &#123;</span></span><br><span class="line"><span class="string">      try_files \$uri /index.html;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    error_page   500 502 503 504  /50x.html;</span></span><br><span class="line"><span class="string">    location = /50x.html &#123;</span></span><br><span class="line"><span class="string">        root   /usr/share/nginx/html/dist;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    # Media: images, icons, video, audio, HTC</span></span><br><span class="line"><span class="string">    location ~* \.(jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webm|htc)$ &#123;</span></span><br><span class="line"><span class="string">    expires 1M;</span></span><br><span class="line"><span class="string">    access_log off;</span></span><br><span class="line"><span class="string">    add_header Cache-Control &quot;public&quot;;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    # CSS and Javascript</span></span><br><span class="line"><span class="string">    location ~* \.(css|js)$ &#123;</span></span><br><span class="line"><span class="string">    expires 1y;</span></span><br><span class="line"><span class="string">    access_log off;</span></span><br><span class="line"><span class="string">    add_header Cache-Control &quot;public&quot;;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">END</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/15820942246314/15821112926505.jpg" alt="-w590"></p>
+<p>运行nginx镜像</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker run \</span><br><span class="line">  -u root \</span><br><span class="line">  --<span class="built_in">rm</span> \</span><br><span class="line">  --name nginx \</span><br><span class="line">  -d \</span><br><span class="line">  -p 40080:80 \</span><br><span class="line">  -v /data/nginx/cfg/:/etc/nginx/conf.d/ \</span><br><span class="line">  -v /data/nginx/wwwroot/:/usr/share/nginx/html/ \</span><br><span class="line">  nginx</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/15820942246314/15821113566156.jpg" alt="-w458"></p>
+<p>添加测试文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> -p /data/nginx/wwwroot/dist</span><br><span class="line">sudo <span class="built_in">echo</span> Hello Nginx &gt; /data/nginx/wwwroot/dist/test.txt</span><br></pre></td></tr></table></figure>
+
+<p>测试 nginx 运行效果</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://172.22.0.4:40080/test.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/15820942246314/15821113849756.jpg" alt="-w472"></p>
+<p>如果能显示 Hello Nginx 说明 nginx 安装成功</p>
+<h3 id="配置-jenkins-持续集成任务"><a href="#配置-jenkins-持续集成任务" class="headerlink" title="配置 jenkins 持续集成任务"></a>配置 jenkins 持续集成任务</h3><h4 id="构建"><a href="#构建" class="headerlink" title="构建"></a>构建</h4><p>配置 jenkins 任务之前，我们先准备一个 hzero-front 工程的代码仓库地址：<br><code>https://code.choerodon.com.cn/hft/hzero-front-demo.git</code></p>
+<p>回到 jenkins 首页 新建一个 jenkins 任务。</p>
+<p>点击 <strong>创建一个新任务</strong> 打开任务编辑界面<br><img src="/images/15820942246314/15821185754719.jpg" alt="-w630"><br>选择 <strong>构建自由风格的软件项目</strong>， 输入一个任务名字<code>hzero-front-ci</code>:</p>
+<p>点击保存后会进入任务编辑页面：</p>
+<p><img src="/images/15820942246314/15821309390419.jpg" alt="-w1054"></p>
+<p>在任务编辑界面的源代码管理 选择 git 选项<br>安装图片填写下面信息：</p>
+<ul>
+<li>Repository URL： 输入代码库地址（<code>https://code.choerodon.com.cn/hft/hzero-front-demo.git</code>）</li>
+<li>Credentials：添加 code.choerodon.com.cn 的账号密码</li>
+</ul>
+<p>在编译环境设置里面勾选上 nodejs 工具。</p>
+<p><img src="/images/15820942246314/15821311690599.jpg" alt="-w980"></p>
+<p>添加一个构建步骤 <code>执行 shell</code><br><img src="/images/15820942246314/15821312331832.jpg" alt="-w515"></p>
+<p>输入下面的 shell 脚本:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">yarn install</span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; src/config/.env.production.yml.local  &lt;&lt; <span class="string">END</span></span><br><span class="line"><span class="string">BASE_PATH: /</span></span><br><span class="line"><span class="string">PLATFORM_VERSION: SAAS</span></span><br><span class="line"><span class="string">CLIENT_ID: localhost</span></span><br><span class="line"><span class="string">GENERATE_SOURCEMAP: false</span></span><br><span class="line"><span class="string">API_HOST: http://backend.hft.jajabjbj.top</span></span><br><span class="line"><span class="string">WEBSOCKET_HOST: ws://ws.hft.jajabjbj.top</span></span><br><span class="line"><span class="string">SKIP_TS_CHECK_IN_START: false</span></span><br><span class="line"><span class="string">ENABLE_VUE_SUPPORT: false</span></span><br><span class="line"><span class="string">SKIP_ESLINT_CHECK_IN_START: false</span></span><br><span class="line"><span class="string">END</span></span><br><span class="line">yarn run build:production</span><br><span class="line">tar -zcf dist.tar.gz ./dist</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/15820942246314/15821804456276.jpg" alt="-w961"></p>
+<p>点击保存。</p>
+<p>下一步然后点击 立即构建，这里会构建并生成 dist 文件</p>
+<p><img src="/images/15820942246314/15821313783678.jpg" alt="-w711"></p>
+<h4 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h4><p>构建完成生成了 dist 文件，下一步我们要把 构建生成的文件部署到 nginx 的 www 目录 <code>/data/nginx/wwwroot</code></p>
+<p>接下来我们配置一下 dist 部署流程</p>
+<p>部署通常都是指把构建好的 dist 文件部署到远程服务器，部署的方法有很多，比如 ftp、 构建 docker等、ssh ， 这里我们演示一下如何通过 ssh 远程部署 dist 文件到 nginx 服务器上。</p>
+<p>首先我们需要安装一个 jenkins 插件 <code>Publish Over SSH</code>。</p>
+<p><img src="/images/15820942246314/15821775655990.jpg" alt="-w814"></p>
+<p>插件的安装方法上文中有提到，这里就不再赘述。</p>
+<p>安装好之后，打开 <strong>系统管理</strong> &gt; <strong>配置中心</strong><br><img src="/images/15820942246314/15821779486366.jpg" alt="-w793"></p>
+<p>把 nginx 服务器的信息 添加到 <code>Publish Over SSH</code> 的 ssh 配置。</p>
+<p><img src="/images/15820942246314/15821778504635.jpg" alt="-w1413"></p>
+<p>对关键配置项的解释：</p>
+<ul>
+<li><strong>name</strong>: 给服务器起一个名字，在后面设置任务时会用到这个名字。</li>
+<li><strong>Hostname</strong>: sshd 服务器的ip地址, 也就是 nginx 服务器ip地址。</li>
+<li><strong>Remote Directory</strong>: 这里是设置服务器上传目录，由于在 jenkins 任务里面可以配置， 为了不引起误解，这里设置成 <code>/</code> 就可以了。</li>
+<li><strong>Passphrase&#x2F;Password</strong>: 这里是服务器 ssh 登录密码，如果是通过私钥连接服务器，可以不输入密码。</li>
+<li><strong>Key</strong>: 这里是服务器的私钥文件内容。如果你是通过 密码 连接 ssh 服务器的话，可以不填私钥。</li>
+</ul>
+<p>然后打开我们刚刚创建的 jenkins 任务，点击配置按钮，进入任务编辑页面。</p>
+<p><img src="/images/15820942246314/15821318511535.jpg" alt="-w500"></p>
+<p>到 <code>Post-build Actions</code> 配置部分添加一个 构建后的部署流程。<br><img src="/images/15820942246314/15821781519316.jpg" alt="-w651"></p>
+<p>然后输入相应的配置</p>
+<p><img src="/images/15820942246314/15821781898781.jpg" alt="-w968"></p>
+<p>对关键配置项的解释：</p>
+<ul>
+<li><strong>name</strong>: 上文在 <strong>系统管理</strong> &gt; <strong>配置中心</strong> 中配置的 ssh 服务器名字。</li>
+<li><strong>Source files</strong>: 制定上传到服务器的文件，注意这里的文件是上面我们配置的构建脚本产生的文件。</li>
+<li><strong>Remote directory</strong>: 这个是上传到远程服务器位置，上传上去的文件还是一个压缩包，后面还有在这个目录下执行节约命令</li>
+<li><strong>Exec command</strong>: 在远程服务器上执行的 shell 命令</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /data/nginx/wwwroot</span><br><span class="line">sudo <span class="built_in">rm</span> -rf dist</span><br><span class="line">sudo tar -zxf dist.tar.gz</span><br></pre></td></tr></table></figure>
+
+<p>然后点击保存，再构建一次。<br><img src="/images/15820942246314/15821793949244.jpg" alt="-w1156"></p>
+<p>看下构建日志。提示发布成功。</p>
+<p><img src="/images/15820942246314/15821794072373.jpg" alt="-w525"></p>
+<p>然后我们可以 在浏览器输入一下 nginx 服务器地址， 试试服务是否成功。</p>
+<h4 id="配置自动持续集成"><a href="#配置自动持续集成" class="headerlink" title="配置自动持续集成"></a>配置自动持续集成</h4><p>如果想实现完全自动的持续集成，还需要配置一个地方</p>
+<p>打开任务配置设置一个触发选项 <code>Poll SCM</code>，设置 <code>Schedule</code> 规则为: <code>H/15 * * * *</code></p>
+<p><img src="/images/15820942246314/15821800915046.jpg" alt="-w1229"></p>
+<p>这里配置项的意思是：每 15 分钟检查一次 git 源代码仓库是否有新的变更，如果有就执行构建任务。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://tool.lu/crontab/">关于 cronjob 表达式的学习</a></p>
+</blockquote>
+<h2 id="jenkins-gh-pages-实现持续集成"><a href="#jenkins-gh-pages-实现持续集成" class="headerlink" title="jenkins + gh-pages 实现持续集成"></a>jenkins + gh-pages 实现持续集成</h2><p>如果没有 nginx 服务器，我们也可以把 dist 部署到 gh-pages 上。</p>
+<p>考虑到 github 的 gh-pages 网速在国内有些慢， 本教程就用国内的 gitee 做一个示范。</p>
+<blockquote>
+<p>gitee网站: <a target="_blank" rel="noopener" href="https://gitee.com/">https://gitee.com/</a></p>
+</blockquote>
+<p>首先我们在 gitee 上面注册好账号，然后再创建一个代码仓库。</p>
+<p><img src="/images/15820942246314/15821819693074.jpg" alt="-w786"></p>
+<p>我们可以得到一个代码仓库地址：<code>https://gitee.com/hzero-cli/hzero-front-demo-dist.git</code></p>
+<p>部署到 gh-pages 上面我们需要用到一个 npm 工具</p>
+<ul>
+<li>gh-pages: <a target="_blank" rel="noopener" href="https://www.npmjs.com/package/gh-pages">gh-pages 文档地址</a></li>
+</ul>
+<p>把这个工具配置到 nodejs 的全局工具上面：</p>
+<p><img src="/images/15820942246314/15821830690021.jpg" alt="-w910"></p>
+<p>配置好工具之后，开始创建 jenkins 任务。</p>
+<p>为了简便，我们基于之前的持续集成任务创建一个新的持续集成任务。</p>
+<p>点击 <strong>新建任务</strong> 按钮<br><img src="/images/15820942246314/15821821404080.jpg" alt="-w670"></p>
+<p>为任务起一个新名字： <code>hzero-front-ci-gitee</code></p>
+<p><img src="/images/15820942246314/15821822551782.jpg" alt="-w1074"></p>
+<p>注意这里我们要选择 <strong>Copy from</strong>, 输入前面创建的任务名字：<code>hzero-front-ci</code></p>
+<p>点击 ok ，进入构建配置部分。<br><img src="/images/15820942246314/15821827533997.jpg" alt="-w1201"></p>
+<p>修改构建脚本，添加 gh-pages 部署命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.email <span class="string">&quot;you@example.com&quot;</span></span><br><span class="line">git config --global user.name <span class="string">&quot;Your Name&quot;</span></span><br><span class="line">gh-pages -r https://hzero-cli:abcd1234@gitee.com/hzero-cli/hzero-front-demo-dist.git   -b gh-pages   -d dist</span><br></pre></td></tr></table></figure>
+
+<p>然后删除从 <code>hzero-front-ci</code> 任务复制过来的 ssh部署 配置</p>
+<p>保存，点击立即构建。</p>
+<p>这样构建生成的 dist 就可以发布到 gitee 代码仓库了。</p>
+<p><img src="/images/15820942246314/15821861555894.jpg" alt="-w820"></p>
+<p>这里会多一个分支，就是我们部署上去的文件。</p>
+<p>接下来我们需要给 gitee 代码仓库设置一下 gh-pages 的 http 服务。</p>
+<p>点击 <strong>服务</strong> &gt; <strong>Gitee Pages</strong></p>
+<p><img src="/images/15820942246314/15821862428010.jpg" alt="-w973"></p>
+<p>设置部署分支为 gh-pages ,然后点击开始按钮</p>
+<p>运行成功之后， 我们得到一个 http 访问地址：<code>http://hzero-cli.gitee.io/hzero-front-demo-dist/</code></p>
+<p>但是访问时， console 还是会报错: </p>
+<p><img src="/images/15820942246314/15821864231685.jpg" alt="-w1147"></p>
+<p>这是因为 gitee 的 gh-pages 提供的 http 地址有一个根路径(public_path)。</p>
+<p>所以我们修改一下构建的环境变量，打开任务的构建配置修改环境变量：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">PUBLIC_URL:</span> <span class="string">/hzero-front-demo-dist/</span></span><br><span class="line"><span class="attr">BASE_PATH:</span> <span class="string">/hzero-front-demo-dist/</span></span><br></pre></td></tr></table></figure>
+
+<p>注意一下 BASE_PATH 和 PUBLIC_URL 的区别。</p>
+<ul>
+<li><strong>PUBLIC_URL</strong> : 会影响资源加载路径，在资源加载路径前面加一层根路径。</li>
+<li><strong>BASE_PATH</strong> : 会影响浏览器的地址栏根路径。在地址栏显示的地址上加一层根路径。</li>
+</ul>
+<p>虽然 BASE_PATH 不会影响资源加载路径，但是我们进入页面之后刷新，必须浏览器的地址栏是以 <code>http://hzero-cli.gitee.io/hzero-front-demo-dist/</code> 为前缀，所以要加一下 BASE_PATH 的配置。</p>
+<p>清除构建缓存，然后点击重新构建<br><img src="/images/15820942246314/15821843422297.jpg" alt="-w369"></p>
+<blockquote>
+<p>注意: 由于 hzero-cli 默认开启了增量更新， 所以修改了环境变量之后，需要清空当前构建任务的缓存。</p>
+</blockquote>
+<p>如果你访问页面，第二次刷新还会有 404 的问题</p>
+<p>这是因为我们 gh-pages 和 nginx 配置 不一样。<br>nginx 上面配置了一段代码： </p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">location</span> / &#123;</span><br><span class="line">  <span class="attribute">try_files</span> <span class="variable">$uri</span> /index.html;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>有了这段代码， 服务器就会路径找不到的http请求重新定位到 &#x2F;index.html</p>
+<p>但是 gh-pages 的原理是: 如果当前 http 请求路径定位不到仓库的文件，就返回 404.html 的内容。</p>
+<p>所以为了能让页面正常显示，我们还需要在脚本构建完成之后 加一行代码 <code>cp dist/index.html dist/404.html</code><br>让浏览器能获取到 index.html 。</p>
+<p>最后脚本修改如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">yarn install</span><br><span class="line"><span class="built_in">cat</span> &gt; src/config/.env.production.local.yml  &lt;&lt; <span class="string">END</span></span><br><span class="line"><span class="string">PUBLIC_URL: /hzero-front-demo-dist/</span></span><br><span class="line"><span class="string">BASE_PATH: /hzero-front-demo-dist/</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">PLATFORM_VERSION: SAAS</span></span><br><span class="line"><span class="string">CLIENT_ID: localhost</span></span><br><span class="line"><span class="string">GENERATE_SOURCEMAP: false</span></span><br><span class="line"><span class="string">API_HOST: http://backend.hft.jajabjbj.top</span></span><br><span class="line"><span class="string">WEBSOCKET_HOST: ws://ws.hft.jajabjbj.top</span></span><br><span class="line"><span class="string">SKIP_TS_CHECK_IN_START: false</span></span><br><span class="line"><span class="string">ENABLE_VUE_SUPPORT: false</span></span><br><span class="line"><span class="string">SKIP_ESLINT_CHECK_IN_START: false</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">END</span></span><br><span class="line"></span><br><span class="line">yarn run build:production</span><br><span class="line"><span class="built_in">cp</span> dist/index.html dist/404.html</span><br><span class="line"></span><br><span class="line">git config --global user.email <span class="string">&quot;you@example.com&quot;</span></span><br><span class="line">git config --global user.name <span class="string">&quot;Your Name&quot;</span></span><br><span class="line">gh-pages-clean</span><br><span class="line">gh-pages -r https://hzero-cli:abcd1234@gitee.com/hzero-cli/hzero-front-demo-dist.git \</span><br><span class="line">  -b gh-pages \</span><br><span class="line">  -d dist</span><br></pre></td></tr></table></figure>
+
+<p>清除构建缓存之后，点击重新构建, 构建成功会自动部署，部署完成之后就可以访问： <a target="_blank" rel="noopener" href="http://hzero-cli.gitee.io/hzero-front-demo-dist">http://hzero-cli.gitee.io/hzero-front-demo-dist</a> 了</p>
+
+        
+            <div id="toc-article">
+                
+  <div class="widget-wrap" id="toc-wrap">
+    <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
+    <div class="widget">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#jenkins-nginx-%E5%AE%9E%E7%8E%B0%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90"><span class="toc-text">jenkins + nginx 实现持续集成</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%AD%E5%BB%BAjenkins"><span class="toc-text">搭建jenkins</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-docker"><span class="toc-text">安装 docker</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-jenkins"><span class="toc-text">安装 jenkins</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-jenkins-%E7%9A%84-nodejs-%E6%8F%92%E4%BB%B6"><span class="toc-text">配置 jenkins 的 nodejs 插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95-nodejs-%E6%8F%92%E4%BB%B6"><span class="toc-text">测试 nodejs 插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-nginx"><span class="toc-text">安装 nginx</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-jenkins-%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E4%BB%BB%E5%8A%A1"><span class="toc-text">配置 jenkins 持续集成任务</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA"><span class="toc-text">构建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2"><span class="toc-text">部署</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E8%87%AA%E5%8A%A8%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90"><span class="toc-text">配置自动持续集成</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jenkins-gh-pages-%E5%AE%9E%E7%8E%B0%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90"><span class="toc-text">jenkins + gh-pages 实现持续集成</span></a></li></ol>
+    </div>
+  </div>
+
+
+            </div>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="http://blog.jajabjbj.top/2020/02/19/2020-02-19/">http://blog.jajabjbj.top/2020/02/19/2020-02-19/</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins/" rel="tag">jenkins</a></li></ul>
+
+          
+    <div class="social-share">
+      <span>分享到:</span>
+    </div>
+
+
+
+        </div>
+      
+      
+        
+<nav id="article-nav">
+  
+    <a href="/2018/08/29/cache/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">older</strong>
+      <div class="article-nav-title">
+        
+          使用高阶组件实现页面的表单数据和state缓存
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/07/10/wasm/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">newer</strong>
+      <div class="article-nav-title">
+        
+          什么是 wasm(webassembly) 技术
+        
+      </div>
+    </a>
+  
+</nav>
+
+      
+      
+        
+
+
+
+
+
+
+
+
+      
+    </footer>
+  </div>
+</article>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-posts"></i> 最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/07/10/wasm/">什么是 wasm(webassembly) 技术</a>
+          </li>
+        
+          <li>
+            <a href="/2020/02/19/2020-02-19/">前端持续集成环境搭建</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/29/cache/">使用高阶组件实现页面的表单数据和state缓存</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/30/2018-05-30/">使用 openssl 生成证书</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/30/2018-05-31-1/">搭建 gitlab-ci 持续集成环境</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-tag"></i> 标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/css/" style="font-size: 10px;">css</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitab-ci/" style="font-size: 10px;">gitab-ci</a> <a href="/tags/gitlab-ci/" style="font-size: 10px;">gitlab-ci</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/jenkins/" style="font-size: 10px;">jenkins</a> <a href="/tags/k8s/" style="font-size: 10px;">k8s</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/react/" style="font-size: 10px;">react</a> <a href="/tags/wasm-webassembly-nodejs/" style="font-size: 10px;">wasm webassembly nodejs</a> <a href="/tags/webpack/" style="font-size: 20px;">webpack</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-link"></i> 友情链接</h3>
+    <div class="widget">
+      <ul>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://juejin.cn/user/3667626519435870/posts">我的掘金</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://juejin.cn/user/8451822983784/posts">我的掘金2</a>
+        </li>
+      
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020年</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018年</a><span class="archive-list-count">12</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <a id="totop" href="#top"></a>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <p>
+        <a href="/sitemap.xml">网站地图</a>
+        <span> | </span><a href="/atom.xml">订阅本站</a>
+        <span> | </span><a href="/about/">联系博主</a>
+      </p>
+      
+      <p>
+        <span>Copyright &copy; 2022 Wayne.</span>
+        <span>Theme by <a href="https://github.com/chaooo/hexo-theme-BlueLake/" target="_blank">BlueLake.</a></span>
+        <span>Powered by <a href="https://hexo.io/" target="_blank">Hexo.</a></span>
+        <div style="background: #ffffffbd; border-radius: 12px;  width: 240px; margin: 0 auto; display: flex; justify-content: center; align-items: center;" class="content___2IB17">
+          <div style="display: flex; justify-content: center; align-items: center; margin-left: 12px;">
+            <img style="width: 20px; height: 20px; margin-right: 4px;" src="data:image/gif;base64,R0lGODlhMgAyALMOAP6/Av6mAv4eAv54Av5OAv7tnv7gbP7YOv7+Av5kAv4xAv6XAv7OA/4DAv///wAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IFdpbmRvd3MiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QUM4RkQzMENFMzI4MTFFMDlCODBFRDg1OUUzMzg3RkMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QUM4RkQzMERFMzI4MTFFMDlCODBFRDg1OUUzMzg3RkMiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpBQzhGRDMwQUUzMjgxMUUwOUI4MEVEODU5RTMzODdGQyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpBQzhGRDMwQkUzMjgxMUUwOUI4MEVEODU5RTMzODdGQyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgH//v38+/r5+Pf29fTz8vHw7+7t7Ovq6ejn5uXk4+Lh4N/e3dzb2tnY19bV1NPS0dDPzs3My8rJyMfGxcTDwsHAv769vLu6ubi3trW0s7KxsK+urayrqqmop6alpKOioaCfnp2cm5qZmJeWlZSTkpGQj46NjIuKiYiHhoWEg4KBgH9+fXx7enl4d3Z1dHNycXBvbm1sa2ppaGdmZWRjYmFgX15dXFtaWVhXVlVUU1JRUE9OTUxLSklIR0ZFRENCQUA/Pj08Ozo5ODc2NTQzMjEwLy4tLCsqKSgnJiUkIyIhIB8eHRwbGhkYFxYVFBMSERAPDg0MCwoJCAcGBQQDAgEAACH5BAEAAA4ALAAAAAAyADIAAAT/0MlJq7046827/2AoOgbDHMWoTsVhvgBjrGBhADGzEETA5CiapoT7JQSNZEMwiBVnQoqruFNalYTF6xSVmAAD5HWcFCR8jJSwACa7rwnAIWoSXwWKvOJtEpYCd3FbJgEEYwNcKjcAe0pnRw1aDANLAwGNZSZzIjcMhkoLlFgmmAILCVYEmiE/l1YDokoKJmNVsmgMH7SvgGO7VgIAn0o/ah2/DbN2SgLIjghXfboMwJipP9Z8adNiCgl64AqSC+HgdtIeJY2WC+3u7/DwbcnoHTfZZHh5b7L1HGyo+DVA04ufqlwgdCQBEM/dloYLAixI0gSKrl4DEmjU6OPURo4M3AJ8/JZkAQBjHpwlmcVgWZIEP9z4s8cgIK5BOHH2YjlCYQOSA2uWy6NFVIJPMDexapkkgIBmNUduzIGnoA8VBwAEPIPIFRmYOgB0m3lRCaJJAcIAG9DuxzAtFkWYGEZA2M94huKUIvuhQEhgAUTeqbtgmcm4PWte6aE4EhiXPOkwwCew6bYoRCof4pu4oGawXSiYiCXwIMoubCZVPqg0tIQSPt3AlOPaAmynZM62rj0BRsAyaADwxuDCROEGZ02cHj6heE7mGvzm+IEY+oUpl61vWK69u/fv4MM7iAAAOw==" alt="" />
+            <a style="margin-left: 10px; color: #666979;" href="https://beian.miit.gov.cn" target="_blank" rel="noreferrer">湘ICP备16020172号-1</a>
+          </div>
+          <!-- <div style="display: flex; justify-content: center; align-items: center; margin-left: 12px;">
+            <img style="width: 20px; height: 20px; margin-right: 4px;" src="https://portal.open.hand-china.com/static/beian-icon.0c577066.png" alt="">
+            <a style="margin-left: 10px; color: #666979;" href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31011802002577" target="_blank" rel="noreferrer">湘公网安备 31011802002577号</a>
+          </div> -->
+        </div>
+      </p>
+    </div>
+  </div>
+</footer>
+
+    </div>
+  </div>
+  
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/search.json.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+
+
+  
+    
+<script src="/localshare/js/social-share.js"></script>
+
+    
+<script src="/localshare/js/qrcode.js"></script>
+
+  
+  
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body>
+</html>

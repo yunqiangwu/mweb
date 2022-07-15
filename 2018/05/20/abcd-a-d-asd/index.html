@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>《深入浅出NodeJS》 读书学习总结 | Wayne</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Wayne" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/localshare/css/share.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Wayne</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">有理想的码农</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/."><i class="fa fa-home"></i> 首页</a>
+        
+          <a class="main-nav-link" href="/archives/"><i class="fa fa-archive"></i> 归档</a>
+        
+          <a class="main-nav-link" href="/about/"><i class="fa fa-user"></i> 关于</a>
+        
+          <a class="main-nav-link" href="/atom.xml"><i class="fa fa-rss"></i> 订阅</a>
+        
+      </nav>
+    </div>
+    <div id="search-form">
+      <div id="result-mask" class="hide"></div>
+      <label><input id="search-key" type="text" autocomplete="off" placeholder="搜索"></label>
+      <div id="result-wrap" class="hide">
+        <div id="search-result"></div>
+      </div>
+      <div class="hide">
+        <template id="search-tpl">
+          <div class="item">
+            <a href="/{path}" title="{title}">
+              <div class="title">{title}</div>
+              <div class="time">{date}</div>
+              <div class="tags">{tags}</div>
+            </a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-abcd-a-d-asd" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      《深入浅出NodeJS》 读书学习总结
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2018-05-20T00:00:00.000Z" itemprop="datePublished">2018年05月20日</time>
+</span>
+      
+      
+        <span class="article-views">
+  <i class="fa fa-views"></i>
+  <i id="busuanzi_container_page_pv">
+      <i id="busuanzi_value_page_pv"></i>
+  </i>
+</span>
+
+      
+      
+<a href="/2018/05/20/abcd-a-d-asd/#comments" class="article-comment-link">
+  
+    
+    
+    
+    
+    
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="《深入浅出NodeJS》-读书学习总结"><a href="#《深入浅出NodeJS》-读书学习总结" class="headerlink" title="《深入浅出NodeJS》 读书学习总结"></a>《深入浅出NodeJS》 读书学习总结</h2><p><img src="http://cdn-qiniu-blog.jajabjbj.top/15271197699318.jpg"></p>
+<h3 id="成果"><a href="#成果" class="headerlink" title="成果"></a>成果</h3><ul>
+<li>文档:<ul>
+<li><a href="https://blog.jajabjbj.top/2018/05/10/2018-05-19/">JavaScript异步编程的机制和相关编程技巧</a></li>
+</ul>
+</li>
+<li>项目<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/yunqiangwu/blog/tree/master/code">node 爬虫</a></li>
+<li><a href="https://blog.jajabjbj.top/2018/05/20/2018-05-23/">服务器端渲染程序 demo 图床</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="读书笔记"><a href="#读书笔记" class="headerlink" title="读书笔记"></a>读书笔记</h3><ul>
+<li>NodeJS 5个特点：异步I&#x2F;O,事件驱动与回调，单线程事件轮询，跨平台。</li>
+<li>NodeJS 5个大坑：异常处理，嵌套太深，没有Sleep，多线程编程，异步转同步。</li>
+<li>NodeJS 4种提升性能的方法：动静分离，缓存（Redis）,多进程，数据库读写分离。</li>
+</ul>
+<h4 id="NodeJS简介"><a href="#NodeJS简介" class="headerlink" title="NodeJS简介"></a>NodeJS简介</h4><ul>
+<li>高性能，符合时间驱动，没有历史包袱这三个主要原因，JavaScript成为了Node的实现语言。</li>
+<li>NodeJS基于Google V8引擎。Node优秀的运算能力主要来自V8的深度优化。</li>
+<li>NodeJS特点：异步I&#x2F;O,事件驱动与回调函数，单线程事件轮询，跨平台</li>
+<li>NodeJS单线程的缺点：<ul>
+<li>无法利用多核CPU.</li>
+<li>错误会引起整个应用进程退出。</li>
+<li>大量计算占用CPU导致无法继续调用异步I&#x2F;O.</li>
+<li>解决单线程缺点的方法是引入子进程方法（Cluster,见后边）和C&#x2F;C++模块扩展（利用它们的多线程机制）。</li>
+</ul>
+</li>
+</ul>
+<h4 id="模块机制"><a href="#模块机制" class="headerlink" title="模块机制"></a>模块机制</h4><ul>
+<li>Node出现之前，服务器端的JS基本没有市场的。</li>
+<li>CommonJS主要是为了弥补当前JS没有标准的缺陷，希望JS能够在任何地方运行。</li>
+</ul>
+<h5 id="模块引用"><a href="#模块引用" class="headerlink" title="模块引用"></a>模块引用</h5><p><code>var xxx = require(‘模块标识’);</code></p>
+<p>例如：<code>var math = require(‘math’);</code></p>
+<h5 id="模块定义"><a href="#模块定义" class="headerlink" title="模块定义"></a>模块定义</h5><p>模块中module对象代表模块自身，exports对象是module的属性，用于导出当前模块的方法或者变量，它是唯一导出的出口。module和exports是node在编译过程中给加上去的。</p>
+<p>NodeJS中，一个文件就是一个模块，将方法或者变量挂在在exports对象上作为属性即可定义导出的方式:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">exports.xxx = ……</span><br><span class="line"></span><br><span class="line">例如： exports.add = function()&#123;</span><br><span class="line"></span><br><span class="line">var sum = 0;</span><br><span class="line"></span><br><span class="line">var i = 0;</span><br><span class="line"></span><br><span class="line">….</span><br><span class="line"></span><br><span class="line">return sum;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（exports和module.exports区别见后）</p>
+<h5 id="模块标识"><a href="#模块标识" class="headerlink" title="模块标识"></a>模块标识</h5><p>就是传给require()的参数。它必须符合小驼峰命名的字符串，或者以。，。。开头的相对路径，或者绝对路径。可以有或者没有文件后缀名（最好有后缀，p&#x2F;17）.</p>
+<p>模块标识分类:</p>
+<ul>
+<li>核心模块，如http, fs, path等。</li>
+<li>.或者..开始的相对路径文件模块。</li>
+<li>以&#x2F;开始的绝对路径文件模块。</li>
+<li>非路径形式的文件模块，如自定义的connect模块。</li>
+</ul>
+<h5 id="Node中引入模块步骤"><a href="#Node中引入模块步骤" class="headerlink" title="Node中引入模块步骤"></a>Node中引入模块步骤</h5><p>（找文件-&gt;找文件扩展名-&gt;编译执行）</p>
+<ol>
+<li>路径分析：定位文件位置，标识符中有路径，甚至没有。</li>
+<li>文件定位：标识符中没有文件扩展名，所以需要确定类型。</li>
+<li>编译执行：不同文件类型，载入方式不一样。</li>
+</ol>
+<h5 id="Node中模块分类"><a href="#Node中模块分类" class="headerlink" title="Node中模块分类"></a>Node中模块分类</h5><ol>
+<li>核心模块（Node提供）：核心模块在Node源代码的编译过程中，编译进了二进制文件，在Node进程启动时，部分核心模块就被加载进内存中，所以这部分核心模块引入时，文件定位和编译执行两步省略掉，且在路径分析时优先判断，所以核心模块加载速度是最快的。</li>
+<li>文件模块（用户编写）：在运行时动态加载，三步骤都需要。<br>Node对引用过的模块都会进行缓存，以减少二次引入时的开销。</li>
+</ol>
+<h5 id="模块路径分析策略"><a href="#模块路径分析策略" class="headerlink" title="模块路径分析策略"></a>模块路径分析策略</h5><p>即node在定位文件模块的具体文件时指定的查找策略。其策略是从当前node-modules开始一级一级向根的node-modules查找，核心模块最快，相对、绝对路径模块次之，自定义文件模块最慢。<br>所以引用模块时，最好加上路径以及扩展名！</p>
+<h5 id="文件定位策略"><a href="#文件定位策略" class="headerlink" title="文件定位策略"></a>文件定位策略</h5><ul>
+<li>因为模块标识符中可以不包含文件扩展名，在这种情况下，Node会按照.js, .json, .node的次序补足扩展名，依次尝试。在尝试的过程中，需要调fs模块的同步阻塞式的判断文件是否存在，所以最好传入文件扩展名。</li>
+<li>require（）通过分析文件扩展之后，可能没找到对应的文件，但却得到了一个目录，此时node会将目录当做一个包来出来（node对包处理会遵守CommonJS包规范）。</li>
+<li>Node中，每个文件模块都是一个对象，定位到具体的文件后，Node会新建一个模块对象，然后根据路径载入并编译。不同的文件扩展名，其载入和编译的方法也不一样：</li>
+<li>.js文件：通过fs模块同步读取文件后编译执行。</li>
+<li>.node文件：这是C&#x2F;C++编写的扩展文件，通过process.dlopen（）方法加载和执行。它不需要编译，因为它是编写C&#x2F;C++模块之后编译生成的. C&#x2F;C++带来的优势主要是执行效率方面的。</li>
+<li>.json文件：通过fs模块同步读取文件后，用JSON.parse()解析返回结果。</li>
+<li>.其余扩展名文件：当做.js文件处理。</li>
+<li>JS模块中require, exports, module这三个变量在模块中并没有定义，是node在编译过程中给加上的，这样每个模块中这三个变量的作用域是隔离的。</li>
+<li>exports和module.exports区别：</li>
+<li>exports指向module.exports的引用, require（）返回的是module.exports而不是exports.如果module.exports指向了一个新对象则exports则断开了对module.exports的引用。刚开始module.exports为空对象，所以exports收集的属性和方法都赋给module.exports，而一旦module.exports有了属性，方法，则exports收集的信息将被忽略，所以在不调用module.exports时，采用exports.</li>
+<li>Node的核心模块在编译成可执行文件的过程中被编译进了二进制文件。核心模块分为C&#x2F;C++编写的和JS编写的两部分。而在编译所有的C&#x2F;C++文件之前，编译程序需要将所有的JS模块文件编译为C&#x2F;C++代码。</li>
+</ul>
+<h4 id="包"><a href="#包" class="headerlink" title="包"></a>包</h4><p>包和NPM是将模块联系起来的一种机制</p>
+<p>包组织模块示意图：<br><img src="http://cdn-qiniu-blog.jajabjbj.top/15271192559496.jpg"><br>包实际上是一个存档文件，即一个目录直接打包为.zip，安装解压还原为目录。</p>
+<h5 id="包结构："><a href="#包结构：" class="headerlink" title="包结构："></a>包结构：</h5><ul>
+<li>package.json:包描述文件。（详细说明p&#x2F;35）</li>
+<li>bin:用于存放可执行二进制文件的目录。</li>
+<li>Lib:用于存放js代码的目录。</li>
+<li>Doc:存放文档的目录。</li>
+<li>Test:存放单元测试用例的代码。</li>
+</ul>
+<h4 id="产品化"><a href="#产品化" class="headerlink" title="产品化"></a>产品化</h4><h5 id="构建工具"><a href="#构建工具" class="headerlink" title="构建工具"></a>构建工具</h5><p>构建工具完成的功能主要是合并静态文件，压缩文件大小，打包应用，编译模块等。Grunt是跨平台的构建工具，它通过Node写成，借助Node的跨平台能力，实现了很好的平台兼容性。<br>代码检测工具JSLint<br>可以通过gitlab等开源工具搭建了内部的代码托管平台。</p>
+<h5 id="Node提升性能的4个方法："><a href="#Node提升性能的4个方法：" class="headerlink" title="Node提升性能的4个方法："></a>Node提升性能的4个方法：</h5><ol>
+<li>动静分离：node处理静态文件的能力不算突出。将图片，脚本，样式表和多媒体等静态文件都导入到专业的静态文件服务器（比如Nginx）上,让node只处理动态请求即可。</li>
+<li>启用缓存Redis或Memcached.</li>
+<li>多进程架构– cluster模块。</li>
+<li>数据库读写分离：就任意数据库而言，读取的速度远远高于写入的速度。而某些数据库在写入时为了保证数据一致性，会进行锁表操作，这同时会影响到读取的速度。为了提升性能，通常会进行数据库的读写分离，将数据库进行主从设计。这样读数据操作不再受写入的影响了。</li>
+</ol>
+<h5 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h5><p>在node中可用connect提供的日志中间件来记录访问日志，当然我们可以在Nginx反向代理里记录访问日志。<br>异常日志的实现：p&#x2F;296-298<br>Node通过nodemailer模块实现邮件报警。</p>
+<h4 id="调试NodeJS"><a href="#调试NodeJS" class="headerlink" title="调试NodeJS"></a>调试NodeJS</h4><p>Node调试可用三种方法：Debugger, console.log()和Node-Inspector<br>Debugger:需要通过debugger;语句在代码中设置断点。使用方法p&#x2F;310 - 311<br>Node-Insepector:可在浏览器中进行调试 或者公共idea 工具调试。</p>
+<h4 id="编程规范"><a href="#编程规范" class="headerlink" title="编程规范"></a>编程规范</h4><ul>
+<li>缩进：采用两个空格而不是Tab</li>
+<li>变量声明：永远用var声明变量</li>
+<li>空格：操作符前后需要加空格</li>
+<li>单双引号的使用：尽量使用单引号，这样无需转译</li>
+<li>大括号的位置：大括号{无需另起一行</li>
+<li>逗号：如果逗号不在行结尾，后面需要一个空格</li>
+<li>分号：给表达式结尾添加分号</li>
+<li>变量命名：小驼峰式</li>
+<li>方法命名：小驼峰式</li>
+<li>类命名：大驼峰式</li>
+<li>常量命名：所有字母大写，以下划线分割</li>
+<li>文件命名：采用下划线分割单词</li>
+</ul>
+<hr>
+
+        
+            <div id="toc-article">
+                
+  <div class="widget-wrap" id="toc-wrap">
+    <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
+    <div class="widget">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%80%8A%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BANodeJS%E3%80%8B-%E8%AF%BB%E4%B9%A6%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93"><span class="toc-text">《深入浅出NodeJS》 读书学习总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%90%E6%9E%9C"><span class="toc-text">成果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0"><span class="toc-text">读书笔记</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#NodeJS%E7%AE%80%E4%BB%8B"><span class="toc-text">NodeJS简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E6%9C%BA%E5%88%B6"><span class="toc-text">模块机制</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E5%BC%95%E7%94%A8"><span class="toc-text">模块引用</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E5%AE%9A%E4%B9%89"><span class="toc-text">模块定义</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E6%A0%87%E8%AF%86"><span class="toc-text">模块标识</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Node%E4%B8%AD%E5%BC%95%E5%85%A5%E6%A8%A1%E5%9D%97%E6%AD%A5%E9%AA%A4"><span class="toc-text">Node中引入模块步骤</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Node%E4%B8%AD%E6%A8%A1%E5%9D%97%E5%88%86%E7%B1%BB"><span class="toc-text">Node中模块分类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E8%B7%AF%E5%BE%84%E5%88%86%E6%9E%90%E7%AD%96%E7%95%A5"><span class="toc-text">模块路径分析策略</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%AE%9A%E4%BD%8D%E7%AD%96%E7%95%A5"><span class="toc-text">文件定位策略</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8C%85"><span class="toc-text">包</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8C%85%E7%BB%93%E6%9E%84%EF%BC%9A"><span class="toc-text">包结构：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%A7%E5%93%81%E5%8C%96"><span class="toc-text">产品化</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E5%B7%A5%E5%85%B7"><span class="toc-text">构建工具</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Node%E6%8F%90%E5%8D%87%E6%80%A7%E8%83%BD%E7%9A%844%E4%B8%AA%E6%96%B9%E6%B3%95%EF%BC%9A"><span class="toc-text">Node提升性能的4个方法：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%97%A5%E5%BF%97"><span class="toc-text">日志</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E8%AF%95NodeJS"><span class="toc-text">调试NodeJS</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E7%A8%8B%E8%A7%84%E8%8C%83"><span class="toc-text">编程规范</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </div>
+
+
+            </div>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="http://blog.jajabjbj.top/2018/05/20/abcd-a-d-asd/">http://blog.jajabjbj.top/2018/05/20/abcd-a-d-asd/</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nodejs/" rel="tag">nodejs</a></li></ul>
+
+          
+    <div class="social-share">
+      <span>分享到:</span>
+    </div>
+
+
+
+        </div>
+      
+      
+        
+<nav id="article-nav">
+  
+    <a href="/2018/05/10/2018-05-19/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">older</strong>
+      <div class="article-nav-title">
+        
+          JavaScript异步编程的机制和相关编程技巧
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/05/20/2018-05-23/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">newer</strong>
+      <div class="article-nav-title">
+        
+          服务器端渲染程序 demo 图床
+        
+      </div>
+    </a>
+  
+</nav>
+
+      
+      
+        
+
+
+
+
+
+
+
+
+      
+    </footer>
+  </div>
+</article>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-posts"></i> 最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/07/10/wasm/">什么是 wasm(webassembly) 技术</a>
+          </li>
+        
+          <li>
+            <a href="/2020/02/19/2020-02-19/">前端持续集成环境搭建</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/29/cache/">使用高阶组件实现页面的表单数据和state缓存</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/30/2018-05-30/">使用 openssl 生成证书</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/30/2018-05-31-1/">搭建 gitlab-ci 持续集成环境</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-tag"></i> 标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/css/" style="font-size: 10px;">css</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitab-ci/" style="font-size: 10px;">gitab-ci</a> <a href="/tags/gitlab-ci/" style="font-size: 10px;">gitlab-ci</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/jenkins/" style="font-size: 10px;">jenkins</a> <a href="/tags/k8s/" style="font-size: 10px;">k8s</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/react/" style="font-size: 10px;">react</a> <a href="/tags/wasm-webassembly-nodejs/" style="font-size: 10px;">wasm webassembly nodejs</a> <a href="/tags/webpack/" style="font-size: 20px;">webpack</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-link"></i> 友情链接</h3>
+    <div class="widget">
+      <ul>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://juejin.cn/user/3667626519435870/posts">我的掘金</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://juejin.cn/user/8451822983784/posts">我的掘金2</a>
+        </li>
+      
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020年</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018年</a><span class="archive-list-count">12</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <a id="totop" href="#top"></a>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <p>
+        <a href="/sitemap.xml">网站地图</a>
+        <span> | </span><a href="/atom.xml">订阅本站</a>
+        <span> | </span><a href="/about/">联系博主</a>
+      </p>
+      
+      <p>
+        <span>Copyright &copy; 2022 Wayne.</span>
+        <span>Theme by <a href="https://github.com/chaooo/hexo-theme-BlueLake/" target="_blank">BlueLake.</a></span>
+        <span>Powered by <a href="https://hexo.io/" target="_blank">Hexo.</a></span>
+        <div style="background: #ffffffbd; border-radius: 12px;  width: 240px; margin: 0 auto; display: flex; justify-content: center; align-items: center;" class="content___2IB17">
+          <div style="display: flex; justify-content: center; align-items: center; margin-left: 12px;">
+            <img style="width: 20px; height: 20px; margin-right: 4px;" src="data:image/gif;base64,R0lGODlhMgAyALMOAP6/Av6mAv4eAv54Av5OAv7tnv7gbP7YOv7+Av5kAv4xAv6XAv7OA/4DAv///wAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IFdpbmRvd3MiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QUM4RkQzMENFMzI4MTFFMDlCODBFRDg1OUUzMzg3RkMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QUM4RkQzMERFMzI4MTFFMDlCODBFRDg1OUUzMzg3RkMiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpBQzhGRDMwQUUzMjgxMUUwOUI4MEVEODU5RTMzODdGQyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpBQzhGRDMwQkUzMjgxMUUwOUI4MEVEODU5RTMzODdGQyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgH//v38+/r5+Pf29fTz8vHw7+7t7Ovq6ejn5uXk4+Lh4N/e3dzb2tnY19bV1NPS0dDPzs3My8rJyMfGxcTDwsHAv769vLu6ubi3trW0s7KxsK+urayrqqmop6alpKOioaCfnp2cm5qZmJeWlZSTkpGQj46NjIuKiYiHhoWEg4KBgH9+fXx7enl4d3Z1dHNycXBvbm1sa2ppaGdmZWRjYmFgX15dXFtaWVhXVlVUU1JRUE9OTUxLSklIR0ZFRENCQUA/Pj08Ozo5ODc2NTQzMjEwLy4tLCsqKSgnJiUkIyIhIB8eHRwbGhkYFxYVFBMSERAPDg0MCwoJCAcGBQQDAgEAACH5BAEAAA4ALAAAAAAyADIAAAT/0MlJq7046827/2AoOgbDHMWoTsVhvgBjrGBhADGzEETA5CiapoT7JQSNZEMwiBVnQoqruFNalYTF6xSVmAAD5HWcFCR8jJSwACa7rwnAIWoSXwWKvOJtEpYCd3FbJgEEYwNcKjcAe0pnRw1aDANLAwGNZSZzIjcMhkoLlFgmmAILCVYEmiE/l1YDokoKJmNVsmgMH7SvgGO7VgIAn0o/ah2/DbN2SgLIjghXfboMwJipP9Z8adNiCgl64AqSC+HgdtIeJY2WC+3u7/DwbcnoHTfZZHh5b7L1HGyo+DVA04ufqlwgdCQBEM/dloYLAixI0gSKrl4DEmjU6OPURo4M3AJ8/JZkAQBjHpwlmcVgWZIEP9z4s8cgIK5BOHH2YjlCYQOSA2uWy6NFVIJPMDexapkkgIBmNUduzIGnoA8VBwAEPIPIFRmYOgB0m3lRCaJJAcIAG9DuxzAtFkWYGEZA2M94huKUIvuhQEhgAUTeqbtgmcm4PWte6aE4EhiXPOkwwCew6bYoRCof4pu4oGawXSiYiCXwIMoubCZVPqg0tIQSPt3AlOPaAmynZM62rj0BRsAyaADwxuDCROEGZ02cHj6heE7mGvzm+IEY+oUpl61vWK69u/fv4MM7iAAAOw==" alt="" />
+            <a style="margin-left: 10px; color: #666979;" href="https://beian.miit.gov.cn" target="_blank" rel="noreferrer">湘ICP备16020172号-1</a>
+          </div>
+          <!-- <div style="display: flex; justify-content: center; align-items: center; margin-left: 12px;">
+            <img style="width: 20px; height: 20px; margin-right: 4px;" src="https://portal.open.hand-china.com/static/beian-icon.0c577066.png" alt="">
+            <a style="margin-left: 10px; color: #666979;" href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31011802002577" target="_blank" rel="noreferrer">湘公网安备 31011802002577号</a>
+          </div> -->
+        </div>
+      </p>
+    </div>
+  </div>
+</footer>
+
+    </div>
+  </div>
+  
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/search.json.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+
+
+  
+    
+<script src="/localshare/js/social-share.js"></script>
+
+    
+<script src="/localshare/js/qrcode.js"></script>
+
+  
+  
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body>
+</html>
